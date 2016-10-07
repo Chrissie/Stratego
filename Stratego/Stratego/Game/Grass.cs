@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stratego.Game
 {
-    class Character : Cell
+    class Grass : Cell
     {
     }
 }
