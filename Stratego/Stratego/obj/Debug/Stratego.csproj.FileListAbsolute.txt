@@ -7,3 +7,4 @@ C:\Users\joey\Google Drive\CODES\Visual Studio\SCHOOL\Week 5\Stratego\Stratego\o
 C:\Users\joey\Google Drive\CODES\Visual Studio\SCHOOL\Week 5\Stratego\Stratego\obj\Debug\Stratego.csproj.GenerateResource.Cache
 C:\Users\joey\Google Drive\CODES\Visual Studio\SCHOOL\Week 5\Stratego\Stratego\obj\Debug\Stratego.exe
 C:\Users\joey\Google Drive\CODES\Visual Studio\SCHOOL\Week 5\Stratego\Stratego\obj\Debug\Stratego.pdb
+C:\Users\Christiaan\Source\Repos\Stratego\Stratego\Stratego\bin\Debug\Stratego.exe.config
