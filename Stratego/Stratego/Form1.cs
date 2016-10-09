@@ -16,5 +16,31 @@ namespace Stratego
         {
             InitializeComponent();
         }
+
+        private void hostButton_Click(object sender, EventArgs e)
+        {
+            menuPanel.Hide();
+            searchPlayerPanel.Show();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            searchHostPanel.Hide();
+            searchPlayerPanel.Hide();
+        }
+
+        private void joinButton_Click(object sender, EventArgs e)
+        {
+            menuPanel.Hide();
+            searchHostPanel.Show();
+        }
+
+        private void backButton_Click(object sender, EventArgs e)
+        {
+            searchHostPanel.Hide();
+            searchPlayerPanel.Hide();
+            menuPanel.Show();
+
+        }
     }
 }

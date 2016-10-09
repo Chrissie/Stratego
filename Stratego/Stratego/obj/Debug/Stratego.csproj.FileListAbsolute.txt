@@ -8,3 +8,12 @@ C:\Users\joey\Google Drive\CODES\Visual Studio\SCHOOL\Week 5\Stratego\Stratego\o
 C:\Users\joey\Google Drive\CODES\Visual Studio\SCHOOL\Week 5\Stratego\Stratego\obj\Debug\Stratego.exe
 C:\Users\joey\Google Drive\CODES\Visual Studio\SCHOOL\Week 5\Stratego\Stratego\obj\Debug\Stratego.pdb
 C:\Users\Christiaan\Source\Repos\Stratego\Stratego\Stratego\bin\Debug\Stratego.exe.config
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\bin\Debug\Stratego.exe.config
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\bin\Debug\Stratego.exe
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\bin\Debug\Stratego.pdb
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.csprojResolveAssemblyReference.cache
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.Form1.resources
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.Properties.Resources.resources
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.csproj.GenerateResource.Cache
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.exe
+C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.pdb

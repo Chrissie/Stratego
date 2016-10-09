@@ -8,5 +8,10 @@ namespace Stratego.Game
 {
     class Flag : Character
     {
+
+        public Flag(string name, bool moveable) : base(name, moveable)
+        {
+            moveable = false;
+        }
     }
 }

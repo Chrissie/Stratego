@@ -8,5 +8,8 @@ namespace Stratego.Game
 {
     class Character : Cell
     {
+        public Character(string name, bool moveable) : base(name, moveable)
+        {
+        }
     }
 }
