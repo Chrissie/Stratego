@@ -7,11 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Stratego.Game;
 
 namespace Stratego
 {
+    
     public partial class Form1 : Form
     {
+        Logic Game;
+        //private Point MouseLocation;
+
         public Form1()
         {
             InitializeComponent();
@@ -42,7 +47,45 @@ namespace Stratego
             searchHostPanel.Hide();
             searchPlayerPanel.Hide();
             menuPanel.Show();
+        }
 
+       
+
+        private void button2_DragDrop(object sender, DragEventArgs e)
+        {
+            Console.WriteLine("works");
+        }
+
+        private void button2_MouseDown(object sender, MouseEventArgs e)
+        {
+            button2.DoDragDrop(button2.Text, DragDropEffects.Copy | DragDropEffects.Move);
+        }
+
+        private void button3_MouseDown(object sender, MouseEventArgs e)
+        {
+            button3.DoDragDrop(button3.Text, DragDropEffects.Copy | DragDropEffects.Move);
+
+            //if(e.Button == MouseButtons.Left)
+            //{
+            //    MouseLocation = e.Location;
+            //}
+        }
+
+        private void button3_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void button3_DragDrop(object sender, DragEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.Data.GetData(DataFormats.Text).ToString());
         }
     }
 }

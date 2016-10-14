@@ -9,6 +9,7 @@ namespace Stratego.Game
 {
     class Cell
     {
+        Point position;
         public string name;
         public bool moveable { get; } = true;
         public Image texture;

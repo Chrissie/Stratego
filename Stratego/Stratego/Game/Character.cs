@@ -8,8 +8,10 @@ namespace Stratego.Game
 {
     class Character : Cell
     {
-        public Character(string name, bool moveable) : base(name, moveable)
+        string username;
+        public Character(string name, bool moveable, string username) : base(name, moveable)
         {
+            this.username = username;
         }
     }
 }
