@@ -21,15 +21,15 @@ namespace Stratego.Game
                 {
                     if (rand.NextDouble() > 0.5)
                     {
-                        board[i, j] = new Soldier("Maarschalk", true, SoldierType.Maarschalk);
+                        board[i, j] = new Soldier("Maarschalk", SoldierType.Maarschalk);
                     }
                     else if(rand.NextDouble() > 0.2)
                     {
-                        board[i, j] = new Soldier("Spion", true, SoldierType.Spion);
+                        board[i, j] = new Soldier("Spion", SoldierType.Spion);
                     }
                     else
                     {
-                        board[i, j] = new Soldier("Generaal", true, SoldierType.Generaal);
+                        board[i, j] = new Soldier("Generaal", SoldierType.Generaal);
                     }
                 }
             }

@@ -24,62 +24,62 @@ namespace Stratego
                     
                     MyPieces = new Cell[numOfPieces];
 
-                    MyPieces[index] = new Soldier(clientname, soldierType.Maarschalk);
+                    MyPieces[index] = new Soldier(clientname, SoldierType.Maarschalk);
                     index++;
-                    MyPieces[index] = new Soldier(clientname, soldierType.Generaal);
+                    MyPieces[index] = new Soldier(clientname, SoldierType.Generaal);
                     index++;
                     for (int i = 0; i < 2; i++)
                     {
-                        MyPieces[index] = new Soldier(clientname, soldierType.Kolonel);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Kolonel);
                         index++;
                     }
 
                     for (int i = 0; i < 3; i++)
                     {
-                        MyPieces[index] = new Soldier(clientname, soldierType.Majoor);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Majoor);
                         index++;
                     }
 
                     for (int i = 0; i < 4; i++)
                     {
-                        MyPieces[index] = new Soldier(clientname, soldierType.Kapitein);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Kapitein);
                         index++;
-                        MyPieces[index] = new Soldier(clientname, soldierType.Lieutenant);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Lieutenant);
                         index++;
                     }
 
                     for (int i = 0; i < 5; i++)
                     {
-                        MyPieces[index] = new Soldier(clientname, soldierType.Sergeant);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Sergeant);
                         index++;
-                        MyPieces[index] = new Soldier(clientname, soldierType.Mineur);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Mineur);
                         index++;
                     }
 
                     for (int i = 0; i < 6; i++)
                     {
-                        MyPieces[index] = new Soldier(clientname, soldierType.Verkenner);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Verkenner);
                         index++;
                         MyPieces[index] = new Bomb(clientname);
                         index++;
                     }
 
-                    MyPieces[index] = new Soldier(clientname, soldierType.Spion);
+                    MyPieces[index] = new Soldier(clientname, SoldierType.Spion);
                     index++;
                     MyPieces[index] = new Flag(clientname);
                     break;
                 case GameMode.Duel:
                     numOfPieces = 10;
                     MyPieces = new Cell[numOfPieces];
-                    MyPieces[index] = new Soldier(clientname, soldierType.Maarschalk);
-                    MyPieces[index] = new Soldier(clientname, soldierType.Generaal);
-                    MyPieces[index] = new Soldier(clientname, soldierType.Spion);
+                    MyPieces[index] = new Soldier(clientname, SoldierType.Maarschalk);
+                    MyPieces[index] = new Soldier(clientname, SoldierType.Generaal);
+                    MyPieces[index] = new Soldier(clientname, SoldierType.Spion);
 
                     for (int i = 0; i < 2; i++)
                     {
-                        MyPieces[index] = new Soldier(clientname, soldierType.Mineur);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Mineur);
                         index++;
-                        MyPieces[index] = new Soldier(clientname, soldierType.Verkenner);
+                        MyPieces[index] = new Soldier(clientname, SoldierType.Verkenner);
                         index++;
                         MyPieces[index] = new Bomb(clientname);
                         index++;
