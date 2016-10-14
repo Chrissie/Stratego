@@ -8,9 +8,8 @@ namespace Stratego.Game
 {
     class Grass : Cell
     {
-        public Grass(string name, bool moveable) : base(name, moveable)
+        public Grass() : base()
         {
-            moveable = false;
         }
     }
 }

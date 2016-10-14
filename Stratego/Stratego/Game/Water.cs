@@ -8,9 +8,8 @@ namespace Stratego.Game
 {
     class Water : Cell
     {
-        public Water(string name, bool moveable) : base(name, moveable)
+        public Water() : base()
         {
-            moveable = false;
         }
     }
 }

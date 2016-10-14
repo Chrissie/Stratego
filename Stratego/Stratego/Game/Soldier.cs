@@ -12,7 +12,7 @@ namespace Stratego.Game
         int number;
         soldierType soldier;
 
-        public Soldier(string name, bool moveable, soldierType soldier) : base(name, moveable)
+        public Soldier(string username, soldierType soldier) : base(username)
         {
             this.soldier = soldier;
         }

@@ -40,10 +40,12 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.menuPanel.SuspendLayout();
             this.searchHostPanel.SuspendLayout();
             this.searchPlayerPanel.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // joinButton
@@ -70,7 +72,7 @@
             // 
             this.menuPanel.Controls.Add(this.joinButton);
             this.menuPanel.Controls.Add(this.hostButton);
-            this.menuPanel.Location = new System.Drawing.Point(970, 616);
+            this.menuPanel.Location = new System.Drawing.Point(921, 25);
             this.menuPanel.Name = "menuPanel";
             this.menuPanel.Size = new System.Drawing.Size(886, 557);
             this.menuPanel.TabIndex = 2;
@@ -79,7 +81,7 @@
             // 
             this.searchHostPanel.Controls.Add(this.button1);
             this.searchHostPanel.Controls.Add(this.label1);
-            this.searchHostPanel.Location = new System.Drawing.Point(12, 616);
+            this.searchHostPanel.Location = new System.Drawing.Point(934, 15);
             this.searchHostPanel.Name = "searchHostPanel";
             this.searchHostPanel.Size = new System.Drawing.Size(886, 557);
             this.searchHostPanel.TabIndex = 2;
@@ -107,7 +109,7 @@
             // 
             this.searchPlayerPanel.Controls.Add(this.backButton);
             this.searchPlayerPanel.Controls.Add(this.label2);
-            this.searchPlayerPanel.Location = new System.Drawing.Point(970, 25);
+            this.searchPlayerPanel.Location = new System.Drawing.Point(957, 12);
             this.searchPlayerPanel.Name = "searchPlayerPanel";
             this.searchPlayerPanel.Size = new System.Drawing.Size(886, 557);
             this.searchPlayerPanel.TabIndex = 3;
@@ -134,6 +136,7 @@
             // panel1
             // 
             this.panel1.AllowDrop = true;
+            this.panel1.Controls.Add(this.dataGridView1);
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Location = new System.Drawing.Point(29, 25);
@@ -157,7 +160,7 @@
             // button2
             // 
             this.button2.AllowDrop = true;
-            this.button2.Location = new System.Drawing.Point(231, 212);
+            this.button2.Location = new System.Drawing.Point(343, 66);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(86, 85);
             this.button2.TabIndex = 0;
@@ -166,6 +169,14 @@
             this.button2.DragDrop += new System.Windows.Forms.DragEventHandler(this.button3_DragDrop);
             this.button2.DragEnter += new System.Windows.Forms.DragEventHandler(this.button3_DragEnter);
             this.button2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.button2_MouseDown);
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(363, 199);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(324, 233);
+            this.dataGridView1.TabIndex = 2;
             // 
             // Form1
             // 
@@ -187,6 +198,7 @@
             this.searchPlayerPanel.ResumeLayout(false);
             this.searchPlayerPanel.PerformLayout();
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -205,6 +217,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
 

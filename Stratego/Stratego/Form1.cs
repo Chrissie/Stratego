@@ -15,7 +15,6 @@ namespace Stratego
     public partial class Form1 : Form
     {
         Logic Game;
-        //private Point MouseLocation;
 
         public Form1()
         {
@@ -49,8 +48,6 @@ namespace Stratego
             menuPanel.Show();
         }
 
-       
-
         private void button2_DragDrop(object sender, DragEventArgs e)
         {
             Console.WriteLine("works");
@@ -64,11 +61,6 @@ namespace Stratego
         private void button3_MouseDown(object sender, MouseEventArgs e)
         {
             button3.DoDragDrop(button3.Text, DragDropEffects.Copy | DragDropEffects.Move);
-
-            //if(e.Button == MouseButtons.Left)
-            //{
-            //    MouseLocation = e.Location;
-            //}
         }
 
         private void button3_DragEnter(object sender, DragEventArgs e)
