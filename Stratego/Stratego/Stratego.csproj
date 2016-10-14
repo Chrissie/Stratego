@@ -75,6 +75,7 @@
     <Compile Include="Game\Grass.cs" />
     <Compile Include="Game\Soldier.cs" />
     <Compile Include="Game\Water.cs" />
+    <Compile Include="Logic.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Server.cs" />
