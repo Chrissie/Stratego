@@ -8,9 +8,9 @@ namespace Stratego.Game
 {
     class Bomb : Character
     {
-        public Bomb(string name, bool moveable) : base(name, moveable)
+        public Bomb(string username) : base(username)
         {
-            moveable = false;
+            
         }
     }
 }
