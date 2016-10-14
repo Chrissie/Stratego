@@ -6,49 +6,54 @@ using System.Threading.Tasks;
 
 namespace Stratego.Game
 {
-    enum soldierType { Maarschalk, Generaal, Kolonel, Majoor, Kapitein, Lieutenant, Sergeant, Mineur, Verkenner, Spion}
+    enum SoldierType { Maarschalk, Generaal, Kolonel, Majoor, Kapitein, Lieutenant, Sergeant, Mineur, Verkenner, Spion}
     class Soldier : Character
     {
         int number;
-        soldierType soldier;
+        SoldierType soldier;
 
-        public Soldier(string name, bool moveable, soldierType soldier) : base(name, moveable)
+        public Soldier(string name, bool moveable, SoldierType soldier) : base(name, moveable)
         {
             this.soldier = soldier;
+        }
+
+        public override string ToString()
+        {
+            return name + ", ";
         }
 
         public void setNumber()
         {
             switch (soldier)
             {
-                case soldierType.Maarschalk:
+                case SoldierType.Maarschalk:
                     number = 10;
                     break;
-                case soldierType.Generaal:
+                case SoldierType.Generaal:
                     number = 9;
                     break;
-                case soldierType.Kolonel:
+                case SoldierType.Kolonel:
                     number = 8;
                     break;
-                case soldierType.Majoor:
+                case SoldierType.Majoor:
                     number = 7;
                     break;
-                case soldierType.Kapitein:
+                case SoldierType.Kapitein:
                     number = 6;
                     break;
-                case soldierType.Lieutenant:
+                case SoldierType.Lieutenant:
                     number = 5;
                     break;
-                case soldierType.Sergeant:
+                case SoldierType.Sergeant:
                     number = 4;
                     break;
-                case soldierType.Mineur:
+                case SoldierType.Mineur:
                     number = 3;
                     break;
-                case soldierType.Verkenner:
+                case SoldierType.Verkenner:
                     number = 2;
                     break;
-                case soldierType.Spion:
+                case SoldierType.Spion:
                     number = 1;
                     break;
             }
