@@ -21,6 +21,7 @@ namespace Stratego
         {
             menuPanel.Hide();
             searchPlayerPanel.Show();
+            Server.Server server = new Server.Server();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -33,6 +34,7 @@ namespace Stratego
         {
             menuPanel.Hide();
             searchHostPanel.Show();
+            Server.Client client = new Server.Client();
         }
 
         private void backButton_Click(object sender, EventArgs e)
