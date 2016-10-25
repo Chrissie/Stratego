@@ -11,15 +11,23 @@ using Stratego.Game;
 
 namespace Stratego
 {
-    
+
     public partial class Form1 : Form
     {
-        Logic Game;
+        private GameBoard Board;
+        private GameMode Mode;
+        public string Clientname;
+
 
         public Form1()
         {
             InitializeComponent();
         }
+
+        //public void EqualizeBoard()
+        //{
+
+        //}
 
         private void hostButton_Click(object sender, EventArgs e)
         {
@@ -32,6 +40,12 @@ namespace Stratego
         {
             searchHostPanel.Hide();
             searchPlayerPanel.Hide();
+
+            //testcode
+            Mode = GameMode.Normal;
+            Clientname = "test";
+            createBoard();
+
         }
 
         private void joinButton_Click(object sender, EventArgs e)
@@ -48,36 +62,50 @@ namespace Stratego
             menuPanel.Show();
         }
 
-        private void button2_DragDrop(object sender, DragEventArgs e)
+        public void Selection(object sender, MouseEventArgs e)
         {
             Console.WriteLine("works");
         }
 
-        private void button2_MouseDown(object sender, MouseEventArgs e)
+        public void createBoard()
         {
-            button2.DoDragDrop(button2.Text, DragDropEffects.Copy | DragDropEffects.Move);
-        }
-
-        private void button3_MouseDown(object sender, MouseEventArgs e)
-        {
-            button3.DoDragDrop(button3.Text, DragDropEffects.Copy | DragDropEffects.Move);
-        }
-
-        private void button3_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.Text))
+            //buttons create temp
+            Board = new GameBoard(Clientname);
+            if (Mode != GameMode.No_Mode)
             {
-                e.Effect = DragDropEffects.Copy;
+                Board.CreatePlayerCells(Mode);
             }
             else
             {
-                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            int k = 0;
+            foreach (Cell C in Board.MyPieces)
+            {
+                System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
+                Button.Size = new System.Drawing.Size(77, 85);
+                Button.MouseClick += Selection;
+                Button.Text = "Piece " + k;
+                k++;
+                Button.Parent = ButtonPanel;
+                //more button settings comming soon....
+
+                C.CellButton = Button;
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Tile Tile = new Tile(i, j);
+                    Tile.panel.BorderStyle = BorderStyle.FixedSingle;
+                    Tile.panel.Parent = BoardPanel;
+                    Tile.panel.Size = new System.Drawing.Size(84, 90);
+                    Tile.panel.MouseClick += Selection;
+                }
             }
         }
 
-        private void button3_DragDrop(object sender, DragEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine(e.Data.GetData(DataFormats.Text).ToString());
-        }
     }
 }

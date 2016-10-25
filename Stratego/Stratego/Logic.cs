@@ -7,12 +7,26 @@ using Stratego.Game;
 
 namespace Stratego
 {
-    enum GameMode { Normal, Duel, Ultra };
+    //enum GameMode { Normal, Duel, Ultra };
     class Logic
     {
         int numOfPieces;
         Cell[] MyPieces;
+        //Dictionary<Button, >
+        System.Windows.Forms.Button[] MyButtons;
         string clientname;
+
+        public void MakeButtons()
+        {
+            for(int i = 0; i < MyPieces.Length; i++)
+            {
+                System.Windows.Forms.Button button = new System.Windows.Forms.Button();
+                button.Size = new System.Drawing.Size(77, 85);
+                //more button settings comming soon....
+                MyButtons[i] = button;
+            }
+            
+        }
 
         public Logic(GameMode mode)
         {
@@ -97,5 +111,7 @@ namespace Stratego
             }
             
         }
+
+        
     }
 }
