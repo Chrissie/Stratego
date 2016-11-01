@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Stratego.Game;
+using System.Threading;
 
 namespace Stratego
 {
@@ -23,9 +24,11 @@ namespace Stratego
 
         private void hostButton_Click(object sender, EventArgs e)
         {
-            menuPanel.Hide();
-            searchPlayerPanel.Show();
-            Server.Server server = new Server.Server();
+            //menuPanel.Hide();
+            //searchPlayerPanel.Show();
+            ServerForm serverform = new ServerForm();
+            serverform.Show();
+            Hide();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -38,7 +41,7 @@ namespace Stratego
         {
             menuPanel.Hide();
             searchHostPanel.Show();
-            Server.Client client = new Server.Client();
+            Server.Client client = new Server.Client("kaka");
         }
 
         private void backButton_Click(object sender, EventArgs e)

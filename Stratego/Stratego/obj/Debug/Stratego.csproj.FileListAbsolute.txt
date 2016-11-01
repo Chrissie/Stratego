@@ -20,3 +20,4 @@ C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.csprojReso
 C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.Form1.resources
 C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.Properties.Resources.resources
 C:\Users\Joey\Documents\Stratego\Stratego\Stratego\obj\Debug\Stratego.csproj.GenerateResource.Cache
+C:\Users\Christiaan\Source\Repos\Stratego\Stratego\Stratego\obj\Debug\Stratego.ServerForm.resources
