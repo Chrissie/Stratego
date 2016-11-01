@@ -10,7 +10,7 @@ namespace Stratego.Game
     class Soldier : Character
     {
         int number;
-        SoldierType soldier;
+        public SoldierType soldier;
 
         public Soldier(string username, SoldierType soldier) : base(username)
         {

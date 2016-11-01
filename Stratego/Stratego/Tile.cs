@@ -17,8 +17,6 @@ namespace Stratego
         public int PosX { get { return X; } set { value = X; } }
         public int PosY { get { return Y; } set { value = Y; } }
 
-        public System.Windows.Forms.FlowLayoutPanel panel = new System.Windows.Forms.FlowLayoutPanel();
-
         public Tile(int x, int y)
         {
             X = x;
