@@ -12,7 +12,7 @@ namespace Stratego.Server
     {
         public Server()
         {
-            SetUp();
+            //SetUp();
         }
 
         public void SetUp()
@@ -66,5 +66,7 @@ namespace Stratego.Server
                 //client.Close();
             }
         }
+
+        
     }
 }
