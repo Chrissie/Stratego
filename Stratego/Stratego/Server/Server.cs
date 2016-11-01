@@ -23,6 +23,7 @@ namespace Stratego.Server
         {
             TcpListener server = null;
             players = new List<Player>();
+            Debug.WriteLine("In SetUp");
             try
             {
                 Int32 port = 13000;
