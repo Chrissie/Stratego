@@ -5,11 +5,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Collections.Generic;
+using Stratego.Game;
 
 namespace Stratego.Server
 {
     class Server
     {
+        private List<Player> players;
+
         public Server()
         {
             //SetUp();
@@ -18,6 +22,7 @@ namespace Stratego.Server
         public void SetUp()
         {
             TcpListener server = null;
+            players = new List<Player>();
             try
             {
                 Int32 port = 13000;

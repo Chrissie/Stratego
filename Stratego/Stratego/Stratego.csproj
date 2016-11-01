@@ -74,6 +74,7 @@
     <Compile Include="Game\Bomb.cs" />
     <Compile Include="Game\Cell.cs" />
     <Compile Include="Game\Character.cs" />
+    <Compile Include="Game\Player.cs" />
     <Compile Include="Server\Client.cs" />
     <Compile Include="Game\Flag.cs" />
     <Compile Include="Game\GameBoard.cs" />
