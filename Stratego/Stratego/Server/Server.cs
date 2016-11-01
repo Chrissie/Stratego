@@ -40,17 +40,23 @@ namespace Stratego.Server
 
                 int i = 0;
                 // Enter the listening loop.
-                while (i<1)
+                while (users.Count <= 10)
                 {
+                    object[] clientsAsObjArray = new object[2];
                     Debug.Write("Waiting for a connection... ");
-                    // Perform a blocking call to accept requests.
-                    // You could also user server.AcceptSocket() here.
-                    TcpClient client = server.AcceptTcpClient();
-                    Debug.WriteLine("Accepted Client");
+
+                    TcpClient client1 = server.AcceptTcpClient();
+                    clientsAsObjArray[0] = client1;
+                    Debug.WriteLine("Accepted Client1");
+
+                    TcpClient client2 = server.AcceptTcpClient();
+                    clientsAsObjArray[1] = client2;
+                    Debug.WriteLine("Accepted Client2");
+
                     Debug.WriteLine("Connected!");
-                    // Handle each client in its own thread
-                    Thread thread = new Thread(HandleClient);
-                    thread.Start(client);
+                    // Handle 2 clients in their own thread
+                    Thread thread = new Thread(HandleTwoClients);
+                    thread.Start(clientsAsObjArray);
                 }
             }
             catch (SocketException e)
@@ -68,9 +74,13 @@ namespace Stratego.Server
             }
         }
 
-        public void HandleClient(object obj)
+        public void HandleTwoClients(object obj)
         {
-            TcpClient client1 = (TcpClient)obj;
+            object[] clients = (object[])obj;
+            TcpClient client1 = (TcpClient)clients[0];
+            TcpClient client2 = (TcpClient)clients[1];
+
+            Debug.WriteLine("Got two clients succesfully in 1 thread!!!");
 
             // Get a stream object for reading and writing.
             NetworkStream Stream = client1.GetStream();

@@ -196,20 +196,20 @@ namespace Stratego.Server
             return messageToSend;
         }
 
-        private Byte[] Read(NetworkStream Stream)
+        private byte[] Read(NetworkStream Stream)
         {
-            Byte[] receiveBuffer = new Byte[4];
+            byte[] receiveBuffer = new byte[4];
             int size1 = (Stream.Read(receiveBuffer, 0, receiveBuffer.Length));
             int sizeSecond = BitConverter.ToInt32(receiveBuffer, 0);
 
-            Byte[] receiveBuffer2 = new Byte[sizeSecond];
-            Byte[] completeBuffer = new Byte[sizeSecond];
+            byte[] receiveBuffer2 = new byte[sizeSecond];
+            byte[] completeBuffer = new byte[sizeSecond];
             int receivedBytes = 0;
             int totalBytes = 0;
             do
             {
                 receivedBytes = Stream.Read(receiveBuffer2, 0, sizeSecond);
-                System.Array.Copy(receiveBuffer2, 0, completeBuffer, totalBytes, receivedBytes);
+                Array.Copy(receiveBuffer2, 0, completeBuffer, totalBytes, receivedBytes);
                 totalBytes += receivedBytes;
             } while (totalBytes < sizeSecond);
             return completeBuffer;
