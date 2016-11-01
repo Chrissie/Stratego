@@ -136,19 +136,24 @@ namespace Stratego
 
         public void SelectMove()
         {
+            ///als er iets in de panel staat dan moet die button gecheckt worden
+            ///lege panels heeft geen zin
+            ///button en dan panel kan verplaatsen
+            ///2 volle panels kunnen slaan
+            ///
             if (SelectedControls[0] is Button && SelectedControls[1] is Button)
             { 
                 Console.WriteLine("rip");
             }
-            if (SelectedControls[0] is FlowLayoutPanel && SelectedControls[1] is FlowLayoutPanel)
+            else if (SelectedControls[0] is FlowLayoutPanel && SelectedControls[1] is FlowLayoutPanel)
             {
                 Console.WriteLine("rip2");
             }
-            if (SelectedControls[0] is Button && SelectedControls[1] is FlowLayoutPanel)
+            else if (SelectedControls[0] is Button && SelectedControls[1] is FlowLayoutPanel)
             {
                 Console.WriteLine("rip3");
             }
-            if (SelectedControls[0] is FlowLayoutPanel && SelectedControls[1] is Button)
+            else if (SelectedControls[0] is FlowLayoutPanel && SelectedControls[1] is Button)
             {
                 Console.WriteLine("rip4");
             }
