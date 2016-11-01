@@ -14,7 +14,5 @@ namespace Stratego.Game
         {
             Username = username;
         }
-
-        
     }
 }

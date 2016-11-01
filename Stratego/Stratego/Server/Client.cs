@@ -19,7 +19,7 @@ namespace Stratego.Server
         NetworkStream stream;
         string loginName = "";
 
-        public Client(string loginName = "Client")
+        public Client(string ip = "localhost" , string loginName = "Client")
         {
             try
             {
@@ -27,7 +27,7 @@ namespace Stratego.Server
                 do
                 {
                     Console.WriteLine("Not connected");
-                    ConnectServer("localhost", "Connected");//localhost
+                    ConnectServer(ip, "Connected");
                     tries++;
                 } while (tries < 10 && !connected);
 

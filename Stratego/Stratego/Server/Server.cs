@@ -18,6 +18,12 @@ namespace Stratego.Server
 
         public Server()
         {
+            Thread setupthread = new Thread(SetUp);
+            setupthread.Start();
+        }
+
+        public void SetUp()
+        {
             TcpListener server = null;
 
             try
