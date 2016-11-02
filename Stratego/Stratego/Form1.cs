@@ -35,10 +35,6 @@ namespace Stratego
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (console)
-            {
-                AllocConsole();
-            }
             searchHostPanel.Hide();
             searchPlayerPanel.Hide();
 
@@ -203,11 +199,7 @@ namespace Stratego
                 }
             }
         }
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-
+        
     }
 }
 

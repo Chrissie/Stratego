@@ -31,6 +31,8 @@ namespace Stratego.Server
                 do
                 {
                     Debug.WriteLine("Not connected");
+                    Debug.WriteLine(ip);
+
                     ConnectServer(ip, "Connected");
                     tries++;
                 } while (tries < 10 && !connected);
