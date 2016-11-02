@@ -61,11 +61,11 @@ namespace Stratego.Server
             }
             catch (SocketException e)
             {
-                Console.WriteLine("SocketException: {0}", e);
+                Debug.WriteLine("SocketException: {0}", e);
             }
             catch (IOException e)
             {
-                Console.WriteLine($"IOException: {e}");
+                Debug.WriteLine($"IOException: {e}");
             }
             finally
             {
@@ -82,53 +82,83 @@ namespace Stratego.Server
 
             Debug.WriteLine("Got two clients succesfully in 1 thread!!!");
 
-            // Get a stream object for reading and writing.
-            NetworkStream Stream = client1.GetStream();
+            NetworkStream player1stream = client1.GetStream();
+            NetworkStream player2stream = client2.GetStream();
+
             if (client1.Connected)
             {
                 // Read the login name from the client.
-                string login = ReadFirstMessage(Stream);
+                string login = ReadFirstMessage(player1stream);
                 lastinfo = login;
                 users.Add(login);
                 Debug.WriteLine("Login: " + login);
-
             }
-            while (client1.Connected)
+            if (client2.Connected)
+            {
+                // Read the login name from the client.
+                string login = ReadFirstMessage(player2stream);
+                lastinfo = login;
+                users.Add(login);
+                Debug.WriteLine("Login: " + login);
+            }
+
+            bool player1turn = true;
+
+            while (client1.Connected && client2.Connected)
             {
                 // Wait for a message from the client and stay blocked until then.
                 dynamic Json = null;
                 try
                 {
-                    //Json = ReadFromClient(Stream);
-                   
+                    if (player1turn)
+                    {
+                        Json = ReadFromClient(player1stream);
+                        Json = "Dit bericht is door de server geweest: " + Json;
+                        WriteToClient(player2stream, Json);
+                        player1turn = !player1turn;
+                    }
+                    else
+                    {
+                        Json = ReadFromClient(player2stream);
+                        Json = "Dit bericht is door de server geweest: " + Json;
+                        WriteToClient(player1stream, Json);
+                        player1turn = !player1turn;
+                    }
+
                 }
                 catch (IOException e)
                 {
-                    Console.WriteLine("Client disconnected " + e.Message);
-
+                    Debug.WriteLine("A player disconnected " + e.Message);
                 }
                 catch (RuntimeBinderException)
                 {
-                    Console.WriteLine("Client disconnected ");
+                    Debug.WriteLine("Client disconnected ");
                     client1.Close();
+                    client2.Close();
                 }
             }
 
             // Shutdown and end connection.
             client1.Close();
-            Console.WriteLine("Connection Closed");
+            client2.Close();
+            Debug.WriteLine("Connection Closed");
         }
 
         // Read from the Stream.
-        public dynamic readFromClient(NetworkStream Stream)
+        public dynamic ReadFromClient(NetworkStream Stream)
         {
-            //Console.WriteLine("Reading from client");
-            Byte[] completeBuffer = Read(Stream);
+            byte[] completeBuffer = Read(Stream);
             return ByteToDynamic(completeBuffer);
         }
 
+        private void WriteToClient(NetworkStream stream, string message)
+        {
+            byte[] buffer = BuildMessage(message);
+            stream.Write(buffer, 0, buffer.Length);
+        }
+
         // Convert byte[] to dynamic.
-        public dynamic ByteToDynamic(Byte[] array)
+        public dynamic ByteToDynamic(byte[] array)
         {
             StringBuilder stringbuilder = new StringBuilder();
             stringbuilder.AppendFormat("{0}", Encoding.ASCII.GetString(array, 0, array.Length));
@@ -138,37 +168,41 @@ namespace Stratego.Server
         // Read the first message from the stream wich is a string.
         public string ReadFirstMessage(NetworkStream Stream)
         {
-            Console.WriteLine("Reading Login");
-            Byte[] completeBuffer = Read(Stream);
+            Debug.WriteLine("Reading Login");
+            byte[] completeBuffer = Read(Stream);
             StringBuilder stringbuilder = new StringBuilder();
             stringbuilder.AppendFormat("{0}", Encoding.ASCII.GetString(completeBuffer, 0, completeBuffer.Length));
             return stringbuilder.ToString();
         }
 
-        private Byte[] Read(NetworkStream Stream)
+        private byte[] Read(NetworkStream Stream)
         {
-            Byte[] receiveBuffer = new Byte[4];
+            byte[] receiveBuffer = new byte[4];
             int size1 = (Stream.Read(receiveBuffer, 0, receiveBuffer.Length));
             int sizeSecond = BitConverter.ToInt32(receiveBuffer, 0);
 
-            Byte[] receiveBuffer2 = new Byte[sizeSecond];
-            Byte[] completeBuffer = new Byte[sizeSecond];
+            byte[] receiveBuffer2 = new byte[sizeSecond];
+            byte[] completeBuffer = new byte[sizeSecond];
             int receivedBytes = 0;
             int totalBytes = 0;
             do
             {
                 receivedBytes = Stream.Read(receiveBuffer2, 0, sizeSecond);
-                System.Array.Copy(receiveBuffer2, 0, completeBuffer, totalBytes, receivedBytes);
+                Array.Copy(receiveBuffer2, 0, completeBuffer, totalBytes, receivedBytes);
                 totalBytes += receivedBytes;
             } while (totalBytes < sizeSecond);
             return completeBuffer;
         }
 
-        // Read from the Stream.
-        public dynamic ReadFromClient(NetworkStream Stream)
+        public byte[] BuildMessage(string s)
         {
-            Byte[] completeBuffer = Read(Stream);
-            return ByteToDynamic(completeBuffer);
+            byte[] messageByte = Encoding.Default.GetBytes(s);
+            byte[] buffer = BitConverter.GetBytes(messageByte.Length);
+
+            byte[] messageToSent = new byte[buffer.Length + messageByte.Length];
+            Array.Copy(messageByte, 0, messageToSent, buffer.Length, messageByte.Length);
+            Array.Copy(buffer, 0, messageToSent, 0, buffer.Length);
+            return messageToSent;
         }
     }
 }

@@ -17,16 +17,20 @@ namespace Stratego.Server
         bool connected = false;
         TcpClient tcpClient;
         NetworkStream stream;
-        string loginName = "";
+        string loginName;
+        string ip;
 
         public Client(string ip = "localhost" , string loginName = "Client")
         {
+            this.loginName = loginName;
+            //this.ip = ip;
+
             try
             {
                 int tries = 0;
                 do
                 {
-                    Console.WriteLine("Not connected");
+                    Debug.WriteLine("Not connected");
                     ConnectServer(ip, "Connected");
                     tries++;
                 } while (tries < 10 && !connected);
@@ -36,9 +40,7 @@ namespace Stratego.Server
                     Debug.WriteLine("Client Connected");
                     Thread reader = new Thread(ReadFromServer);
                     reader.Start();
-                    Thread writer = new Thread(UpdateToServer);
-                    writer.Start();
-
+                   
                     WriteFirstMessageToServer();
                 }
             }
@@ -62,7 +64,7 @@ namespace Stratego.Server
                 }
                 byte[] bytes = BuildMessage(loginName);
                 stream.Write(bytes, 0, bytes.Length);
-                Console.WriteLine("Send Client");
+                Debug.WriteLine("Send Client");
                 connected = true;
                 
             }
@@ -70,60 +72,6 @@ namespace Stratego.Server
             {
                 Debug.WriteLine(e.StackTrace);
             }
-        }
-
-        public static void SetUp(object obj)
-        {
-            TcpListener server = null;
-            try
-            {
-                Debug.WriteLine("In try");
-                Int32 port = 13000;
-                IPAddress ip = IPAddress.Parse("127.0.0.1");
-                server = new TcpListener(ip, port);
-                server.Start();
-
-                while (true)
-                {
-                    Debug.WriteLine("in while");
-                    TcpClient client = server.AcceptTcpClient();
-                    Debug.WriteLine("Connected!");
-                    Thread thread = new Thread(HandleClient);
-                    thread.Start(client);
-                }
-            }
-
-            catch (SocketException e)
-            {
-                Debug.WriteLine("SocketException: {0}", e);
-            }
-            finally
-            {
-                // Stop listening for new clients.
-                server.Stop();
-            }
-        }
-
-        public static void HandleClient(object obj)
-        {
-            TcpClient client = (TcpClient)obj;
-            NetworkStream stream = client.GetStream();
-            if (client.Connected)
-            {
-                byte[] data = new byte[400];
-                stream.Read(data, 0, data.Length);
-                string datatostring = Encoding.ASCII.GetString(data);
-                dynamic json = JsonConvert.DeserializeObject(datatostring);
-                Debug.WriteLine((string)json);
-
-                string writes = JsonConvert.SerializeObject("string");
-                byte[] bytes = Encoding.ASCII.GetBytes(writes);
-                stream.Write(bytes, 0, bytes.Length);
-
-
-                //client.Close();
-            }
-            stream.Close();
         }
 
         public void ReadFromServer(object obj)
@@ -153,21 +101,11 @@ namespace Stratego.Server
             }
         }
 
-
-        public void UpdateToServer(object obj)
-        {
-            
-        }
-
         public void WriteFirstMessageToServer()
         {
-            //stream = tcpClient.GetStream();
-            //Console.WriteLine("We {0} write", stream.CanWrite);
             if (stream.CanWrite)
             {
-                //byte[] sendBytes = ObjectToByteArray(measurement);
                 byte[] sendBytes = SendTunnel(loginName);
-                //Console.WriteLine("Message Lenght " + sendBytes.Length);
                 stream.Write(sendBytes, 0, sendBytes.Length);
             }
             else
@@ -187,7 +125,7 @@ namespace Stratego.Server
         public byte[] BuildMessage(string s)
         {
             byte[] jsonByte = Encoding.Default.GetBytes(s);
-            Console.WriteLine("Json length:" + jsonByte.Length);
+            Debug.WriteLine("Json length:" + jsonByte.Length);
             byte[] buffer = BitConverter.GetBytes(jsonByte.Length);
 
             byte[] messageToSend = new byte[buffer.Length + jsonByte.Length];
@@ -214,7 +152,6 @@ namespace Stratego.Server
             } while (totalBytes < sizeSecond);
             return completeBuffer;
         }
-
 
     }
 }
