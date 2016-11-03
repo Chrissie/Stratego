@@ -24,7 +24,7 @@ namespace Stratego.Server
 
         public Client(string ip = "localhost" , string loginName = "Client")
         {
-            this.loginName = loginName;
+            LoginName= loginName;
             
             try
             {
@@ -61,11 +61,11 @@ namespace Stratego.Server
                 tcpClient = new TcpClient(server, port);
                 // Identify to the server as a client
                 stream = tcpClient.GetStream();
-                if (!loginName.Equals("Client"))
+                if (!LoginName.Equals("Client"))
                 {
-                    loginName = "Client-" + loginName;
+                    LoginName = "Client-" + LoginName;
                 }
-                byte[] bytes = BuildMessage(loginName);
+                byte[] bytes = BuildMessage(LoginName);
                 stream.Write(bytes, 0, bytes.Length);
                 Debug.WriteLine("Send Client");
                 connected = true;  
@@ -118,7 +118,7 @@ namespace Stratego.Server
         {
             if (stream.CanWrite)
             {
-                byte[] sendBytes = SendTunnel(loginName);
+                byte[] sendBytes = SendTunnel(LoginName);
                 stream.Write(sendBytes, 0, sendBytes.Length);
             }
             else
