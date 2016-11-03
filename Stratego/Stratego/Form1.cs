@@ -131,6 +131,10 @@ namespace Stratego
 
                     Client.PlayerBoard.board[tile.PosX, tile.PosY] = cell;
                 }
+                if (Client.IsPlayersTurn)
+                {
+                    Client.SendGameBoard();
+                }
             }
         }
 

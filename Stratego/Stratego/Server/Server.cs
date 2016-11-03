@@ -135,7 +135,7 @@ namespace Stratego.Server
                             formatter.Serialize(ms, ServerGameBoard.board);
                             arrayasstring = Encoding.UTF8.GetString(ms.ToArray());
                         }
-                        byte[] tosend = BuildMessage(arrayasstring);
+                        byte[] tosend = BuildMessage("board-" + arrayasstring);
                         player1stream.Write(tosend, 0, tosend.Length);
                         WriteToClient(player2stream, Json);
                         player1turn = !player1turn;
@@ -162,7 +162,7 @@ namespace Stratego.Server
                             formatter.Serialize(ms, ServerGameBoard.board);
                             arrayasstring = Encoding.UTF8.GetString(ms.ToArray());
                         }
-                        byte[] tosend = BuildMessage(arrayasstring);
+                        byte[] tosend = BuildMessage("board-" + arrayasstring);
                         player2stream.Write(tosend, 0, tosend.Length);
                         WriteToClient(player1stream, Json);
                         player1turn = !player1turn;

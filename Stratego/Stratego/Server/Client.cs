@@ -99,22 +99,28 @@ namespace Stratego.Server
                         if (returnData.StartsWith("board"))
                         {
                             //update client gameboard
-                            PlayerBoard = (Game.GameBoard) JsonConvert.DeserializeObject(returnData.Split('-')[1]);
+                            Cell[,] cells;
+                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(returnData.Split('-')[1])))
+                            {
+                                SoapFormatter formatter = new SoapFormatter();
+                                cells = formatter.Deserialize(ms) as Cell[,];
+                            }
+                            PlayerBoard.board = cells;
                             Debug.WriteLine("Received new gameboard from server! " + PlayerBoard.ToString());
                         }
                         if (returnData.StartsWith("yourturn"))
                         {
-                            //IsPlayersTurn = true;
-                            SendGameBoard();
+                            IsPlayersTurn = true;
+                            //SendGameBoard();
 
                         }
 
-                        if (IsPlayersTurn)
-                        {
-                            Debug.WriteLine($"{LoginName}: My turn, sending the gameboard");
-                            SendGameBoard();
-                            IsPlayersTurn = !IsPlayersTurn;
-                        }
+                        //if (IsPlayersTurn)
+                        //{
+                        //    Debug.WriteLine($"{LoginName}: My turn, sending the gameboard");
+                        //    SendGameBoard();
+                        //    IsPlayersTurn = !IsPlayersTurn;
+                        //}
                     }
                 }
                 catch (IOException e)
