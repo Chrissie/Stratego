@@ -107,7 +107,6 @@ namespace Stratego.Server
 
             bool player1turn = true;
 
-            WriteToClient(player1stream, "yourturn");
             while (client1.Connected && client2.Connected)
             {
                 // Wait for a message from the client and stay blocked until then.
@@ -116,31 +115,56 @@ namespace Stratego.Server
                 {
                     if (player1turn)
                     {
+                        WriteToClient(player1stream, "yourturn");
                         Json = ReadFromClient(player1stream);
+                        Cell[,] cells;
                         using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Json)))
                         {
                             SoapFormatter formatter = new SoapFormatter();
-                            Cell[,] cells = formatter.Deserialize(ms) as Cell[,];
+                            cells = formatter.Deserialize(ms) as Cell[,];
                         }
-                        //JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-                        ////Game.GameBoard JsonGameBoard = (Game.GameBoard)JsonConvert.DeserializeObject(Json, settings);
-                        //Game.Cell[,] JsonGameBoard = (Game.Cell[,])JsonConvert.DeserializeObject(Json, settings);
-                        ////JsonGameBoard.RotateBoard180();
-                        //Json = JsonConvert.SerializeObject(JsonGameBoard);
-                        //Json = "board-" + Json;
-                        //Debug.WriteLine("Rotated player1's GameBoard in Server");
-                        //WriteToClient(player2stream, Json);
+                        Thread.Sleep(2000);
+                        GameBoard ServerGameBoard = new GameBoard("Player1");
+                        ServerGameBoard.board = cells;
+                        ServerGameBoard.RotateBoard180();
+
+                        string arrayasstring = "";
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            SoapFormatter formatter = new SoapFormatter();
+                            formatter.Serialize(ms, ServerGameBoard.board);
+                            arrayasstring = Encoding.UTF8.GetString(ms.ToArray());
+                        }
+                        byte[] tosend = BuildMessage(arrayasstring);
+                        player1stream.Write(tosend, 0, tosend.Length);
+                        WriteToClient(player2stream, Json);
                         player1turn = !player1turn;
                     }
                     else
                     {
-                        //Json = ReadFromClient(player2stream);
-                        //Game.GameBoard JsonGameBoard = (Game.GameBoard)JsonConvert.DeserializeObject(Json);
-                        //JsonGameBoard.RotateBoard180();
-                        //Json = JsonConvert.SerializeObject(JsonGameBoard);
-                        //Json = "board-" + Json;
-                        //Debug.WriteLine("Rotated player2's GameBoard in Server");
-                        //WriteToClient(player1stream, Json);
+                        WriteToClient(player2stream, "yourturn");
+                        Json = ReadFromClient(player2stream);
+                        Cell[,] cells;
+                        using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Json)))
+                        {
+                            SoapFormatter formatter = new SoapFormatter();
+                            cells = formatter.Deserialize(ms) as Cell[,];
+                        }
+                        Thread.Sleep(2000);
+                        GameBoard ServerGameBoard = new GameBoard("Player2");
+                        ServerGameBoard.board = cells;
+                        ServerGameBoard.RotateBoard180();
+
+                        string arrayasstring = "";
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            SoapFormatter formatter = new SoapFormatter();
+                            formatter.Serialize(ms, ServerGameBoard.board);
+                            arrayasstring = Encoding.UTF8.GetString(ms.ToArray());
+                        }
+                        byte[] tosend = BuildMessage(arrayasstring);
+                        player2stream.Write(tosend, 0, tosend.Length);
+                        WriteToClient(player1stream, Json);
                         player1turn = !player1turn;
                     }
 
@@ -182,7 +206,8 @@ namespace Stratego.Server
         {
             StringBuilder stringbuilder = new StringBuilder();
             stringbuilder.AppendFormat("{0}", Encoding.ASCII.GetString(array, 0, array.Length));
-            return JsonConvert.DeserializeObject(stringbuilder.ToString());
+            //return JsonConvert.DeserializeObject(stringbuilder.ToString());
+            return stringbuilder.ToString();
         }
 
         // Read the first message from the stream wich is a string.
