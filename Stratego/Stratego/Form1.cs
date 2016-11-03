@@ -18,7 +18,6 @@ namespace Stratego
         private GameMode Mode;
         private Server.Client Client;
         private Control[] SelectedControls = new Control[2];
-        bool console = true;
 
         private readonly Color SELECTIONCOLOR = Color.FromArgb(255, 192, 128);
         private readonly Color DESELECTCOLOR = Color.Transparent;
@@ -35,7 +34,7 @@ namespace Stratego
             //testcode
             Mode = GameMode.Normal;
             createBoard();
-            UpdateGameboard();
+            Client.PlayerBoard.Test();
         }
         
         
@@ -122,77 +121,148 @@ namespace Stratego
 
         public void UpdateGameboard()
         {
-            //foreach (FlowLayoutPanel f in BoardPanel.Controls)
-            //{
-            //    Tile tile = f.Tag as Tile;
-            //    Cell cell = f.Controls[0].Tag as Cell;
+            Client.PlayerBoard.board = new Cell[10, 10];
+            foreach (FlowLayoutPanel f in BoardPanel.Controls)
+            {
+                if (f.Controls.Count > 0)
+                {
+                    Tile tile = f.Tag as Tile;
+                    Cell cell = f.Controls[0].Tag as Cell;
 
-            //    if (cell is Soldier)
-            //    {
-            //        Soldier c = cell as Soldier;
-            //        Console.WriteLine(c.soldier);
-            //    }
-            //    else if (cell is Bomb)
-            //    {
-            //        Bomb c = cell as Bomb;
-            //        Console.WriteLine("bomb");
-            //    }
-            //    else if (cell is Flag)
-            //    {
-            //        Flag c = cell as Flag;
-            //        Console.WriteLine("flag");
-            //    }
-
-            //    //Client.PlayerBoard.board[1, 2] = new Cell();
-            //}
+                    Client.PlayerBoard.board[tile.PosX, tile.PosY] = cell;
+                }
+            }
         }
-        
+
+        public void UpdateGUI()
+        {
+            foreach (FlowLayoutPanel f in BoardPanel.Controls)
+            {
+                f.Controls.Clear();
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    string a = "" + i + j;
+                    int q = int.Parse(a);
+                    string username = "NO_USER";
+
+                    Cell cell = Client.PlayerBoard.board[i, j];
+
+
+                    //find cell in gameboard
+                    if (cell != null)
+                    {
+                        //create button for piece in the right panel
+                        System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
+                        Button.Size = new System.Drawing.Size(72, 80);
+                        Button.MouseClick += SelectionControl;
+                        Button.FlatStyle = FlatStyle.Flat;
+
+                        //check username
+                        if (cell is Soldier)
+                        {
+                            Soldier c = cell as Soldier;
+                            username = c.username;
+                            Button.Text = c.soldier.ToString();
+                        }
+                        else if (cell is Bomb)
+                        {
+                            Bomb c = cell as Bomb;
+                            username = c.username;
+                            Button.Text = "Bom";
+                        }
+                        else if (cell is Flag)
+                        {
+                            Flag c = cell as Flag;
+                            username = c.username;
+                            Button.Text = "Vlag";
+                        }
+                        if (!username.Equals(Client.LoginName))
+                        {
+                            Button.Text = "EnemyPiece_" + q;
+                            Button.Name = "EnemyPiece_" + q;
+                        }
+
+                        Button.Tag = cell;
+                        Button.Parent = BoardPanel.Controls[q];
+                    }
+                }
+            }
+
+        }
+
 
         public void createBoard()
         {
-            ////buttons create temp
-            //Client.PlayerBoard = new GameBoard(Client.LoginName);
-            //if (Mode != GameMode.No_Mode)
-            //{
-            //    Client.PlayerBoard.CreatePlayerCells(Mode);
-            //}
-            //else
-            //{
-            //    return;
-            //}
+            //buttons create temp
+            Client.PlayerBoard = new GameBoard(Client.LoginName);
+            if (Mode != GameMode.No_Mode)
+            {
+                Client.PlayerBoard.CreatePlayerCells(Mode);
+            }
+            else
+            {
+                return;
+            }
 
-            //int k = 0;
-            //foreach (Cell C in Client.PlayerBoard.MyPieces)
-            //{
-            //    System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
-            //    Button.Size = new System.Drawing.Size(72, 80);
-            //    Button.MouseClick += SelectionControl;
-            //    Button.Text = "Piece_" + k;
-            //    Button.FlatStyle = FlatStyle.Flat;
-            //    Button.Parent = ButtonPanel;
-            //    //more button settings comming soon....
+            int k = 0;
+            foreach (Cell C in Client.PlayerBoard.MyPieces)
+            {
+                System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
+                Button.Size = new System.Drawing.Size(72, 80);
+                Button.MouseClick += SelectionControl;
+                Button.Text = "Piece_" + k;
+                Button.FlatStyle = FlatStyle.Flat;
+                Button.Parent = ButtonPanel;
+                //more button settings comming soon....
                 
-            //    Button.Tag = C;
-            //    Button.Name = "Piece_" + k;
-            //    k++;
-            //}
+                Button.Tag = C;
+                if (C is Soldier)
+                {
+                    Soldier c = C as Soldier;
+                    Button.Text = c.soldier.ToString();
+                }
+                else if (C is Bomb)
+                {
+                    Bomb c = C as Bomb;
+                    Button.Text = "Bom";
+                }
+                else if (C is Flag)
+                {
+                    Flag c = C as Flag;
+                    Button.Text = "Vlag";
+                }
+                k++;
+            }
 
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    for (int j = 0; j < 10; j++)
-            //    {
-            //        Tile Tile = new Tile(i, j);
-            //        FlowLayoutPanel Panel = new FlowLayoutPanel();
-            //        Panel.BorderStyle = BorderStyle.FixedSingle;
-            //        Panel.Parent = BoardPanel;
-            //        Panel.Size = new System.Drawing.Size(79, 87);
-            //        Panel.MouseClick += SelectionControl;
-            //        Panel.Tag = Tile;
-            //        Panel.Name = "Tile_" + i + "," + j;
-            //    }
-            //}
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Tile Tile = new Tile(i, j);
+                    FlowLayoutPanel Panel = new FlowLayoutPanel();
+                    Panel.BorderStyle = BorderStyle.FixedSingle;
+                    Panel.Parent = BoardPanel;
+                    Panel.Size = new System.Drawing.Size(79, 87);
+                    Panel.MouseClick += SelectionControl;
+                    Panel.Tag = Tile;
+                    Panel.Name = "Tile_" + i + "," + j;
+                }
+            }
         }
-        
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            UpdateGameboard();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            UpdateGUI();
+        }
     }
 }
 
