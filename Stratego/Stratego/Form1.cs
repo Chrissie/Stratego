@@ -29,42 +29,16 @@ namespace Stratego
             InitializeComponent();
         }
 
-        private void hostButton_Click(object sender, EventArgs e)
-        {
-            menuPanel.Hide();
-            searchPlayerPanel.Show();
-            Server.Server server = new Server.Server();
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (console)
-            {
-                AllocConsole();
-            }
-            searchHostPanel.Hide();
-            searchPlayerPanel.Hide();
 
             //testcode
             Mode = GameMode.Normal;
             Clientname = "test";
             createBoard();
         }
-
-        private void joinButton_Click(object sender, EventArgs e)
-        {
-            menuPanel.Hide();
-            searchHostPanel.Show();
-            Server.Client client = new Server.Client();
-        }
-
-        private void backButton_Click(object sender, EventArgs e)
-        {
-            searchHostPanel.Hide();
-            searchPlayerPanel.Hide();
-            menuPanel.Show();
-        }
-
+        
+        
         public void SelectionControl(object sender, MouseEventArgs e)
         {
             //check if button is already selected
@@ -169,7 +143,7 @@ namespace Stratego
             foreach (Cell C in Board.MyPieces)
             {
                 System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
-                Button.Size = new System.Drawing.Size(77, 85);
+                Button.Size = new System.Drawing.Size(72, 80);
                 Button.MouseClick += SelectionControl;
                 Button.Text = "Piece_" + k;
                 Button.FlatStyle = FlatStyle.Flat;
@@ -189,18 +163,14 @@ namespace Stratego
                     FlowLayoutPanel Panel = new FlowLayoutPanel();
                     Panel.BorderStyle = BorderStyle.FixedSingle;
                     Panel.Parent = BoardPanel;
-                    Panel.Size = new System.Drawing.Size(84, 92);
+                    Panel.Size = new System.Drawing.Size(79, 87);
                     Panel.MouseClick += SelectionControl;
                     Panel.Tag = Tile;
                     Panel.Name = "Tile_" + i + "," + j;
                 }
             }
         }
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-
+        
     }
 }
 
