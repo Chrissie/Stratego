@@ -17,7 +17,10 @@ namespace Stratego.Server
         bool connected = false;
         TcpClient tcpClient;
         NetworkStream stream;
-        string loginName;
+        public string LoginName;
+
+        public Game.GameBoard PlayerBoard;
+        public bool IsPlayersTurn = false;
 
         public Client(string ip = "localhost" , string loginName = "Client")
         {
@@ -92,6 +95,8 @@ namespace Stratego.Server
                         if (returnData.StartsWith("board"))
                         {
                             //update client gameboard
+                            PlayerBoard = (Game.GameBoard) JsonConvert.DeserializeObject(returnData.Split('-')[1]);
+                            IsPlayersTurn = true;
                         }
                     }
                 }
