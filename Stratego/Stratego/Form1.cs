@@ -12,9 +12,11 @@ using System.Runtime.InteropServices;
 
 namespace Stratego
 {
+    public enum GameState { PiecePlacement, Game, Finished};
 
     public partial class Form1 : Form
     {
+        private GameState StateGame = GameState.Game;
         private GameMode Mode;
         private Server.Client Client;
         private Control[] SelectedControls = new Control[2];
@@ -33,6 +35,8 @@ namespace Stratego
 
             //testcode
             Mode = GameMode.Normal;
+            ButtonPanel.MouseClick += SelectionControl;
+            ButtonPanel.Tag = new Tile(101, 101);
             createBoard();
             Client.PlayerBoard.Test();
         }
@@ -105,13 +109,36 @@ namespace Stratego
 
         public void MovePieces(Button button, FlowLayoutPanel panel)
         {
-            if (panel.Controls.Count > 0)
+            bool canMove = true;
+            //check for placement in own half of the field
+            if (StateGame == GameState.PiecePlacement)
+            {
+                Tile T = panel.Tag as Tile;
+                string a = "" + T.PosX + T.PosY;
+                int q = int.Parse(a);
+                if (q <= 59)
+                {
+                    Console.WriteLine("Can't place piece here in this state");
+                    canMove = false;
+                }
+            }
+
+            if (StateGame == GameState.Game)
+            {
+                if (button.Tag is Bomb || button.Tag is Flag)
+                {
+                    canMove = false;
+                    Console.WriteLine("bomb or flag cannot be moved in this state");
+                }
+            }
+            //check op  volle panel
+            if (panel.Controls.Count > 0 && panel.Controls.Count < 2)
             {
                 Console.WriteLine("Panel must be empty");
             }
-            else
+
+            else if(canMove)
             {
-                //check op  volle panel
                 button.Parent = panel;
             }
 
@@ -211,13 +238,13 @@ namespace Stratego
             int k = 0;
             foreach (Cell C in Client.PlayerBoard.MyPieces)
             {
+                //create buttons for the player to use
                 System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
                 Button.Size = new System.Drawing.Size(72, 80);
                 Button.MouseClick += SelectionControl;
                 Button.Text = "Piece_" + k;
                 Button.FlatStyle = FlatStyle.Flat;
                 Button.Parent = ButtonPanel;
-                //more button settings comming soon....
                 
                 Button.Tag = C;
                 if (C is Soldier)
@@ -237,19 +264,31 @@ namespace Stratego
                 }
                 k++;
             }
-
+            
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
+                    //create all panels
                     Tile Tile = new Tile(i, j);
                     FlowLayoutPanel Panel = new FlowLayoutPanel();
-                    Panel.BorderStyle = BorderStyle.FixedSingle;
-                    Panel.Parent = BoardPanel;
+                    string a = "" + i + j;
+                    int q = int.Parse(a);
+                    if (q == 42|| q == 43|| q == 46|| q == 47||
+                        q == 52|| q == 53|| q == 56|| q == 57)
+                    {
+                        Panel.BorderStyle = BorderStyle.None;
+                    }
+                    else
+                    {
+
+                        Panel.BorderStyle = BorderStyle.FixedSingle;
+                        Panel.MouseClick += SelectionControl;
+                    }
                     Panel.Size = new System.Drawing.Size(79, 87);
-                    Panel.MouseClick += SelectionControl;
                     Panel.Tag = Tile;
                     Panel.Name = "Tile_" + i + "," + j;
+                    Panel.Parent = BoardPanel;
                 }
             }
         }
@@ -263,6 +302,7 @@ namespace Stratego
         {
             UpdateGUI();
         }
+        
     }
 }
 
