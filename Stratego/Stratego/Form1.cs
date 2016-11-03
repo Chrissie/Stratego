@@ -17,7 +17,7 @@ namespace Stratego
     {
         private GameBoard Board;
         private GameMode Mode;
-        public string Clientname;
+        private Server.Client Client;
         private Control[] SelectedControls = new Control[2];
         bool console = true;
 
@@ -34,7 +34,6 @@ namespace Stratego
 
             //testcode
             Mode = GameMode.Normal;
-            Clientname = "test";
             createBoard();
         }
         
@@ -129,7 +128,7 @@ namespace Stratego
         public void createBoard()
         {
             //buttons create temp
-            Board = new GameBoard(Clientname);
+            Board = new GameBoard(Client.LoginName);
             if (Mode != GameMode.No_Mode)
             {
                 Board.CreatePlayerCells(Mode);
