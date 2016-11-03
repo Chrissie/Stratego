@@ -10,7 +10,7 @@ namespace Stratego.Game
     public enum GameMode { No_Mode, Normal, Duel, Ultra };
     public class GameBoard
     {
-        public Cell[,] board;
+        public Cell[,] board = new Cell[10, 10];
         
         public Cell[] MyPieces;
         string Clientname;
@@ -19,16 +19,6 @@ namespace Stratego.Game
         public GameBoard(string Clientname)
         {
             this.Clientname = Clientname;
-        }
-        
-        public void UpdateBoard(GameBoard newBoard)
-        {
-            board = newBoard.board;
-        }
-
-        public void ReadBoard()
-        {
-
         }
 
        
@@ -70,8 +60,8 @@ namespace Stratego.Game
         public void Test()
         {
             Random rand = new Random();
-            board = new Cell[10, 10];
-            for (int i = 0; i < 10; i++)
+            //board = new Cell[10, 10];
+            for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
@@ -89,9 +79,9 @@ namespace Stratego.Game
                     }
                 }
             }
-            PrintBoard();
+           // PrintBoard();
             board = RotateBoard180();
-            PrintBoard();
+           //PrintBoard();
         }
 
         public void CreatePlayerCells(GameMode mode)

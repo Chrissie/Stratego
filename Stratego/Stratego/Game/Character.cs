@@ -8,7 +8,7 @@ namespace Stratego.Game
 {
     class Character : Cell
     {
-        string username;
+        public string username;
 
         public Character(string username) : base()
         {
