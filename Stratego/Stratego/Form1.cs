@@ -24,9 +24,10 @@ namespace Stratego
         private readonly Color SELECTIONCOLOR = Color.FromArgb(255, 192, 128);
         private readonly Color DESELECTCOLOR = Color.Transparent;
 
-        public Form1()
+        public Form1(Server.Client client)
         {
             InitializeComponent();
+            Client = client;
         }
 
         private void Form1_Load(object sender, EventArgs e)
