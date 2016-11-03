@@ -2,19 +2,25 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Stratego.Game
 {
+    [Serializable]
     public enum GameMode { No_Mode, Normal, Duel, Ultra };
-    public class GameBoard
+    public class GameBoard 
     {
         public Cell[,] board;
         
         public Cell[] MyPieces;
-        string Clientname;
+        public string Clientname;
 
+        public GameBoard()
+        {
+
+        }
 
         public GameBoard(string Clientname)
         {
@@ -31,7 +37,12 @@ namespace Stratego.Game
 
         }
 
-       
+        public static GameBoard FromCells(Cell[,] cells , string clientname)
+        {
+            GameBoard g = new GameBoard(clientname);
+            g.board = cells;
+            return g;
+        }
 
         public Cell[,] RotateBoard180()
         {
@@ -183,6 +194,7 @@ namespace Stratego.Game
             }
 
         }
+
     }
 
 }
