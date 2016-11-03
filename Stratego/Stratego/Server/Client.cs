@@ -18,13 +18,11 @@ namespace Stratego.Server
         TcpClient tcpClient;
         NetworkStream stream;
         string loginName;
-        string ip;
 
         public Client(string ip = "localhost" , string loginName = "Client")
         {
             this.loginName = loginName;
-            //this.ip = ip;
-
+            
             try
             {
                 int tries = 0;
@@ -67,8 +65,7 @@ namespace Stratego.Server
                 byte[] bytes = BuildMessage(loginName);
                 stream.Write(bytes, 0, bytes.Length);
                 Debug.WriteLine("Send Client");
-                connected = true;
-                
+                connected = true;  
             }
             catch (SocketException e)
             {
@@ -87,10 +84,14 @@ namespace Stratego.Server
                         byte[] bytes = Read(stream);
 
                         string returnData = Encoding.ASCII.GetString(bytes);
-                        Debug.WriteLine("Host returns: " + returnData);
+                        Debug.WriteLine("Server returns: " + returnData);
                         if (returnData.StartsWith("chat"))
                         {
 
+                        }
+                        if (returnData.StartsWith("board"))
+                        {
+                            //update client gameboard
                         }
                     }
                 }
@@ -101,6 +102,11 @@ namespace Stratego.Server
                     connected = false;
                 }
             }
+        }
+
+        public void SendGameBoard(Game.GameBoard board)
+        {
+
         }
 
         public void WriteFirstMessageToServer()
@@ -127,7 +133,7 @@ namespace Stratego.Server
         public byte[] BuildMessage(string s)
         {
             byte[] jsonByte = Encoding.Default.GetBytes(s);
-            Debug.WriteLine("Json length:" + jsonByte.Length);
+            //Debug.WriteLine("Json length:" + jsonByte.Length);
             byte[] buffer = BitConverter.GetBytes(jsonByte.Length);
 
             byte[] messageToSend = new byte[buffer.Length + jsonByte.Length];
