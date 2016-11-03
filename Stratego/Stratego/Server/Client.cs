@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Net;
 using System.IO;
+using System.Xml.Serialization;
+using Stratego.Game;
 
 namespace Stratego.Server
 {
@@ -25,7 +27,8 @@ namespace Stratego.Server
         public Client(string ip = "localhost" , string loginName = "Client")
         {
             LoginName= loginName;
-            
+            PlayerBoard = new GameBoard(LoginName);
+            PlayerBoard.Test();
             try
             {
                 int tries = 0;
@@ -66,7 +69,7 @@ namespace Stratego.Server
                     LoginName = "Client-" + LoginName;
                 }
                 byte[] bytes = BuildMessage(LoginName);
-                stream.Write(bytes, 0, bytes.Length);
+                //stream.Write(bytes, 0, bytes.Length);
                 Debug.WriteLine("Send Client");
                 connected = true;  
             }
@@ -87,7 +90,7 @@ namespace Stratego.Server
                         byte[] bytes = Read(stream);
 
                         string returnData = Encoding.ASCII.GetString(bytes);
-                        Debug.WriteLine("Server returns: " + returnData);
+                        Debug.WriteLine($"{LoginName}: Server returns: " + returnData);
                         if (returnData.StartsWith("chat"))
                         {
 
@@ -96,8 +99,20 @@ namespace Stratego.Server
                         {
                             //update client gameboard
                             PlayerBoard = (Game.GameBoard) JsonConvert.DeserializeObject(returnData.Split('-')[1]);
-                            IsPlayersTurn = true;
                             Debug.WriteLine("Received new gameboard from server! " + PlayerBoard.ToString());
+                        }
+                        if (returnData.StartsWith("yourturn"))
+                        {
+                            //IsPlayersTurn = true;
+                            SendGameBoard();
+
+                        }
+
+                        if (IsPlayersTurn)
+                        {
+                            Debug.WriteLine($"{LoginName}: My turn, sending the gameboard");
+                            SendGameBoard();
+                            IsPlayersTurn = !IsPlayersTurn;
                         }
                     }
                 }
@@ -129,13 +144,25 @@ namespace Stratego.Server
 
         public void SendGameBoard()
         {
-            byte[] boardbytes = SendTunnel(PlayerBoard);
+
+
+            byte[] boardbytes = SendTunnel(PlayerBoard.board);
+            Debug.WriteLine($"{LoginName}: writing boardbytes: {boardbytes}");
             stream.Write(boardbytes, 0, boardbytes.Length);
         }
 
         public byte[] SendTunnel(dynamic command)
         {
-            return BuildMessage(JsonConvert.SerializeObject(command));
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            return BuildMessage(JsonConvert.SerializeObject(command, settings));
+        }
+
+        public byte[] SendTunnel(string prefix, dynamic command)
+        {
+            byte[] prefixbytes = BuildMessage(prefix);
+            byte[] objectbytes = BuildMessage(JsonConvert.SerializeObject(command));
+            Array.Copy(prefixbytes, 0, objectbytes, 0, prefixbytes.Length);
+            return objectbytes;
         }
 
         public byte[] BuildMessage(string s)
@@ -147,6 +174,7 @@ namespace Stratego.Server
             byte[] messageToSend = new byte[buffer.Length + jsonByte.Length];
             Array.Copy(jsonByte, 0, messageToSend, buffer.Length, jsonByte.Length);
             Array.Copy(buffer, 0, messageToSend, 0, buffer.Length);
+            Debug.WriteLine($"MessagetoSend: {messageToSend}");
             return messageToSend;
         }
 

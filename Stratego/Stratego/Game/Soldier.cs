@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stratego.Game
 {
+    [Serializable]
     enum SoldierType { Maarschalk, Generaal, Kolonel, Majoor, Kapitein, Lieutenant, Sergeant, Mineur, Verkenner, Spion}
     class Soldier : Character
     {

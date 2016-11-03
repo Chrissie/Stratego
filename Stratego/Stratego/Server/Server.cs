@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace Stratego.Server
 {
@@ -104,6 +105,7 @@ namespace Stratego.Server
 
             bool player1turn = true;
 
+            WriteToClient(player1stream, "yourturn");
             while (client1.Connected && client2.Connected)
             {
                 // Wait for a message from the client and stay blocked until then.
@@ -113,25 +115,25 @@ namespace Stratego.Server
                     if (player1turn)
                     {
                         Json = ReadFromClient(player1stream);
-                        //Json = "Dit bericht is door de server geweest: " + Json;
-                        Game.GameBoard JsonGameBoard = (Game.GameBoard) JsonConvert.DeserializeObject(Json);
-                        JsonGameBoard.RotateBoard180();
-                        Json = JsonConvert.SerializeObject(JsonGameBoard);
-                        Json = "board-" + Json;
-                        Debug.WriteLine("Rotated player1's GameBoard in Server");
-                        WriteToClient(player2stream, Json);
+                        //JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+                        ////Game.GameBoard JsonGameBoard = (Game.GameBoard)JsonConvert.DeserializeObject(Json, settings);
+                        //Game.Cell[,] JsonGameBoard = (Game.Cell[,])JsonConvert.DeserializeObject(Json, settings);
+                        ////JsonGameBoard.RotateBoard180();
+                        //Json = JsonConvert.SerializeObject(JsonGameBoard);
+                        //Json = "board-" + Json;
+                        //Debug.WriteLine("Rotated player1's GameBoard in Server");
+                        //WriteToClient(player2stream, Json);
                         player1turn = !player1turn;
                     }
                     else
                     {
-                        Json = ReadFromClient(player2stream);
-                        //Json = "Dit bericht is door de server geweest: " + Json;
-                        Game.GameBoard JsonGameBoard = (Game.GameBoard)JsonConvert.DeserializeObject(Json);
-                        JsonGameBoard.RotateBoard180();
-                        Json = JsonConvert.SerializeObject(JsonGameBoard);
-                        Json = "board-" + Json;
-                        Debug.WriteLine("Rotated player2's GameBoard in Server");
-                        WriteToClient(player1stream, Json);
+                        //Json = ReadFromClient(player2stream);
+                        //Game.GameBoard JsonGameBoard = (Game.GameBoard)JsonConvert.DeserializeObject(Json);
+                        //JsonGameBoard.RotateBoard180();
+                        //Json = JsonConvert.SerializeObject(JsonGameBoard);
+                        //Json = "board-" + Json;
+                        //Debug.WriteLine("Rotated player2's GameBoard in Server");
+                        //WriteToClient(player1stream, Json);
                         player1turn = !player1turn;
                     }
 
@@ -140,12 +142,12 @@ namespace Stratego.Server
                 {
                     Debug.WriteLine("A player disconnected " + e.Message);
                 }
-                catch (RuntimeBinderException)
-                {
-                    Debug.WriteLine("Client disconnected ");
-                    client1.Close();
-                    client2.Close();
-                }
+                //catch (RuntimeBinderException)
+                //{
+                //    Debug.WriteLine("Client disconnected because runtimebinder ");
+                //    client1.Close();
+                //    client2.Close();
+                //}
             }
 
             // Shutdown and end connection.
@@ -163,6 +165,7 @@ namespace Stratego.Server
 
         private void WriteToClient(NetworkStream stream, string message)
         {
+            Debug.WriteLine($"Server: Writing message {message} to a stream");
             byte[] buffer = BuildMessage(message);
             stream.Write(buffer, 0, buffer.Length);
         }
@@ -178,10 +181,11 @@ namespace Stratego.Server
         // Read the first message from the stream wich is a string.
         public string ReadFirstMessage(NetworkStream Stream)
         {
-            Debug.WriteLine("Reading Login");
+            Debug.WriteLine("Server: Reading Login");
             byte[] completeBuffer = Read(Stream);
             StringBuilder stringbuilder = new StringBuilder();
             stringbuilder.AppendFormat("{0}", Encoding.ASCII.GetString(completeBuffer, 0, completeBuffer.Length));
+            Debug.WriteLine($"Server: Finished Login Read: {stringbuilder.ToString()}");
             return stringbuilder.ToString();
         }
 
