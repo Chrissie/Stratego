@@ -12,7 +12,7 @@ using System.IO;
 
 namespace Stratego.Server
 {
-    class Client
+    public class Client
     {
         bool connected = false;
         TcpClient tcpClient;
@@ -97,6 +97,7 @@ namespace Stratego.Server
                             //update client gameboard
                             PlayerBoard = (Game.GameBoard) JsonConvert.DeserializeObject(returnData.Split('-')[1]);
                             IsPlayersTurn = true;
+                            Debug.WriteLine("Received new gameboard from server! " + PlayerBoard.ToString());
                         }
                     }
                 }
@@ -109,10 +110,6 @@ namespace Stratego.Server
             }
         }
 
-        public void SendGameBoard(Game.GameBoard board)
-        {
-
-        }
 
         public void WriteFirstMessageToServer()
         {
@@ -128,6 +125,12 @@ namespace Stratego.Server
                 stream.Close();
                 connected = false;
             }
+        }
+
+        public void SendGameBoard()
+        {
+            byte[] boardbytes = SendTunnel(PlayerBoard);
+            stream.Write(boardbytes, 0, boardbytes.Length);
         }
 
         public byte[] SendTunnel(dynamic command)

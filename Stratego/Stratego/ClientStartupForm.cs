@@ -46,9 +46,9 @@ namespace Stratego
         private void startbutton_Click(object sender, EventArgs e)
         {
             //Player p = new Player(gebruikersnaam_Textbox.Text);
-            new Server.Client(ipAdress_textbox.Text ,gebruikersnaam_Textbox.Text);
+            Server.Client client = new Server.Client(ipAdress_textbox.Text ,gebruikersnaam_Textbox.Text);
             Hide();
-            Form1 form = new Form1();
+            Form1 form = new Form1(client);
             form.Show();
         }
 

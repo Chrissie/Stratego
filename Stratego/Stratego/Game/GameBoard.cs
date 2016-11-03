@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Stratego.Game
 {
-    enum GameMode { No_Mode, Normal, Duel, Ultra };
-    class GameBoard
+    public enum GameMode { No_Mode, Normal, Duel, Ultra };
+    public class GameBoard
     {
         public Cell[,] board;
         

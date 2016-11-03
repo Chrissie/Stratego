@@ -113,14 +113,24 @@ namespace Stratego.Server
                     if (player1turn)
                     {
                         Json = ReadFromClient(player1stream);
-                        Json = "Dit bericht is door de server geweest: " + Json;
+                        //Json = "Dit bericht is door de server geweest: " + Json;
+                        Game.GameBoard JsonGameBoard = (Game.GameBoard) JsonConvert.DeserializeObject(Json);
+                        JsonGameBoard.RotateBoard180();
+                        Json = JsonConvert.SerializeObject(JsonGameBoard);
+                        Json = "board-" + Json;
+                        Debug.WriteLine("Rotated player1's GameBoard in Server");
                         WriteToClient(player2stream, Json);
                         player1turn = !player1turn;
                     }
                     else
                     {
                         Json = ReadFromClient(player2stream);
-                        Json = "Dit bericht is door de server geweest: " + Json;
+                        //Json = "Dit bericht is door de server geweest: " + Json;
+                        Game.GameBoard JsonGameBoard = (Game.GameBoard)JsonConvert.DeserializeObject(Json);
+                        JsonGameBoard.RotateBoard180();
+                        Json = JsonConvert.SerializeObject(JsonGameBoard);
+                        Json = "board-" + Json;
+                        Debug.WriteLine("Rotated player2's GameBoard in Server");
                         WriteToClient(player1stream, Json);
                         player1turn = !player1turn;
                     }

@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace Stratego.Game
 {
-    class Cell
+    public class Cell
     {
         public Image Texture;
         public Image CellImage { get { return Texture; } set { Texture = value; } }
