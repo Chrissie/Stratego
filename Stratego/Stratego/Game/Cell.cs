@@ -11,7 +11,6 @@ namespace Stratego.Game
     {
         public Image Texture;
         public Image CellImage { get { return Texture; } set { Texture = value; } }
-
         public Cell()
         {
         }

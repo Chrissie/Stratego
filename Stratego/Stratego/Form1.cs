@@ -15,7 +15,6 @@ namespace Stratego
 
     public partial class Form1 : Form
     {
-        private GameBoard Board;
         private GameMode Mode;
         private Server.Client Client;
         private Control[] SelectedControls = new Control[2];
@@ -35,6 +34,7 @@ namespace Stratego
             //testcode
             Mode = GameMode.Normal;
             createBoard();
+            UpdateGameboard();
         }
         
         
@@ -119,19 +119,41 @@ namespace Stratego
             SelectionControl(panel, null);
         }
 
-        public void HitPieces()
+        public void UpdateGameboard()
         {
+            foreach (FlowLayoutPanel f in BoardPanel.Controls)
+            {
+                Tile tile = f.Tag as Tile;
+                Cell cell = f.Controls[0].Tag as Cell;
 
+                if (cell is Soldier)
+                {
+                    Soldier c = cell as Soldier;
+                    Console.WriteLine(c.soldier);
+                }
+                else if (cell is Bomb)
+                {
+                    Bomb c = cell as Bomb;
+                    Console.WriteLine("bomb");
+                }
+                else if (cell is Flag)
+                {
+                    Flag c = cell as Flag;
+                    Console.WriteLine("flag");
+                }
+
+                //Client.PlayerBoard.board[1, 2] = new Cell();
+            }
         }
         
 
         public void createBoard()
         {
             //buttons create temp
-            Board = new GameBoard(Client.LoginName);
+            Client.PlayerBoard = new GameBoard(Client.LoginName);
             if (Mode != GameMode.No_Mode)
             {
-                Board.CreatePlayerCells(Mode);
+                Client.PlayerBoard.CreatePlayerCells(Mode);
             }
             else
             {
@@ -139,7 +161,7 @@ namespace Stratego
             }
 
             int k = 0;
-            foreach (Cell C in Board.MyPieces)
+            foreach (Cell C in Client.PlayerBoard.MyPieces)
             {
                 System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
                 Button.Size = new System.Drawing.Size(72, 80);
