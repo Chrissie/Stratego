@@ -88,6 +88,7 @@ namespace Stratego.Server
             NetworkStream player1stream = client1.GetStream();
             NetworkStream player2stream = client2.GetStream();
 
+            GameBoard ServerGameBoard = new GameBoard("serverboard");
             if (client1.Connected)
             {
                 // Read the login name from the client.
@@ -124,7 +125,6 @@ namespace Stratego.Server
                             cells = formatter.Deserialize(ms) as Cell[,];
                         }
                         Thread.Sleep(2000);
-                        GameBoard ServerGameBoard = new GameBoard("Player1");
                         ServerGameBoard.board = cells;
                         ServerGameBoard.RotateBoard180();
 
@@ -135,8 +135,11 @@ namespace Stratego.Server
                             formatter.Serialize(ms, ServerGameBoard.board);
                             arrayasstring = Encoding.UTF8.GetString(ms.ToArray());
                         }
-                        byte[] tosend = BuildMessage("board-" + arrayasstring);
-                        player1stream.Write(tosend, 0, tosend.Length);
+                        byte[] tosend1 = BuildMessage("board");
+                        player2stream.Write(tosend1, 0, tosend1.Length);
+
+                        byte[] tosend2 = BuildMessage(arrayasstring);
+                        player1stream.Write(tosend2, 0, tosend2.Length);
                         WriteToClient(player2stream, Json);
                         player1turn = !player1turn;
                     }
@@ -151,9 +154,10 @@ namespace Stratego.Server
                             cells = formatter.Deserialize(ms) as Cell[,];
                         }
                         Thread.Sleep(2000);
-                        GameBoard ServerGameBoard = new GameBoard("Player2");
-                        ServerGameBoard.board = cells;
-                        ServerGameBoard.RotateBoard180();
+                        GameBoard NewGameBoard = new GameBoard("lmao");
+                        NewGameBoard.board = cells;
+                        NewGameBoard.RotateBoard180();
+                        ServerGameBoard.CreateFullGameBoard(NewGameBoard);
 
                         string arrayasstring = "";
                         using (MemoryStream ms = new MemoryStream())
@@ -162,8 +166,11 @@ namespace Stratego.Server
                             formatter.Serialize(ms, ServerGameBoard.board);
                             arrayasstring = Encoding.UTF8.GetString(ms.ToArray());
                         }
-                        byte[] tosend = BuildMessage("board-" + arrayasstring);
-                        player2stream.Write(tosend, 0, tosend.Length);
+                        byte[] tosend1 = BuildMessage("board");
+                        player2stream.Write(tosend1, 0, tosend1.Length);
+
+                        byte[] tosend2 = BuildMessage(arrayasstring);
+                        player2stream.Write(tosend2, 0, tosend2.Length);
                         WriteToClient(player1stream, Json);
                         player1turn = !player1turn;
                     }

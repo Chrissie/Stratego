@@ -99,8 +99,10 @@ namespace Stratego.Server
                         if (returnData.StartsWith("board"))
                         {
                             //update client gameboard
+                            byte[] bytes2 = Read(stream);
+
                             Cell[,] cells;
-                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(returnData.Split('-')[1])))
+                            using (MemoryStream ms = new MemoryStream(bytes2))
                             {
                                 SoapFormatter formatter = new SoapFormatter();
                                 cells = formatter.Deserialize(ms) as Cell[,];
