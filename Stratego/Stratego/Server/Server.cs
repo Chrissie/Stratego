@@ -1,11 +1,13 @@
 ﻿using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json;
+using Stratego.Game;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Soap;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
@@ -115,6 +117,11 @@ namespace Stratego.Server
                     if (player1turn)
                     {
                         Json = ReadFromClient(player1stream);
+                        using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Json)))
+                        {
+                            SoapFormatter formatter = new SoapFormatter();
+                            Cell[,] cells = formatter.Deserialize(ms) as Cell[,];
+                        }
                         //JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
                         ////Game.GameBoard JsonGameBoard = (Game.GameBoard)JsonConvert.DeserializeObject(Json, settings);
                         //Game.Cell[,] JsonGameBoard = (Game.Cell[,])JsonConvert.DeserializeObject(Json, settings);

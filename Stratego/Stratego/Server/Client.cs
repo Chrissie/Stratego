@@ -11,6 +11,7 @@ using System.Net;
 using System.IO;
 using System.Xml.Serialization;
 using Stratego.Game;
+using System.Runtime.Serialization.Formatters.Soap;
 
 namespace Stratego.Server
 {
@@ -144,11 +145,19 @@ namespace Stratego.Server
 
         public void SendGameBoard()
         {
+            string arraya = "";
+            using (MemoryStream ms = new MemoryStream())
+            {
+                SoapFormatter formatter = new SoapFormatter();
+                formatter.Serialize(ms, PlayerBoard.board);
+                arraya = Encoding.UTF8.GetString(ms.ToArray());
+            }
+            byte[] tosend = BuildMessage(arraya);
+            stream.Write(tosend, 0, tosend.Length);
 
-
-            byte[] boardbytes = SendTunnel(PlayerBoard.board);
-            Debug.WriteLine($"{LoginName}: writing boardbytes: {boardbytes}");
-            stream.Write(boardbytes, 0, boardbytes.Length);
+            //    byte[] boardbytes = SendTunnel(PlayerBoard.board);
+            //Debug.WriteLine($"{LoginName}: writing boardbytes: {boardbytes}");
+            //stream.Write(boardbytes, 0, boardbytes.Length);
         }
 
         public byte[] SendTunnel(dynamic command)

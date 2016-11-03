@@ -8,6 +8,7 @@ namespace Stratego.Game
 {
     [Serializable]
     enum SoldierType { Maarschalk, Generaal, Kolonel, Majoor, Kapitein, Lieutenant, Sergeant, Mineur, Verkenner, Spion}
+    [Serializable]
     class Soldier : Character
     {
         int number;

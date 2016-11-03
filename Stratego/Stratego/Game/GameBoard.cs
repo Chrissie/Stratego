@@ -101,7 +101,7 @@ namespace Stratego.Game
                 }
             }
             PrintBoard();
-            board = RotateBoard180();
+            //board = RotateBoard180();
             PrintBoard();
         }
 

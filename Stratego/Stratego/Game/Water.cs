@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stratego.Game
 {
+    [Serializable]
     class Water : Cell
     {
         public Water() : base()

@@ -122,75 +122,75 @@ namespace Stratego
 
         public void UpdateGameboard()
         {
-            foreach (FlowLayoutPanel f in BoardPanel.Controls)
-            {
-                Tile tile = f.Tag as Tile;
-                Cell cell = f.Controls[0].Tag as Cell;
+            //foreach (FlowLayoutPanel f in BoardPanel.Controls)
+            //{
+            //    Tile tile = f.Tag as Tile;
+            //    Cell cell = f.Controls[0].Tag as Cell;
 
-                if (cell is Soldier)
-                {
-                    Soldier c = cell as Soldier;
-                    Console.WriteLine(c.soldier);
-                }
-                else if (cell is Bomb)
-                {
-                    Bomb c = cell as Bomb;
-                    Console.WriteLine("bomb");
-                }
-                else if (cell is Flag)
-                {
-                    Flag c = cell as Flag;
-                    Console.WriteLine("flag");
-                }
+            //    if (cell is Soldier)
+            //    {
+            //        Soldier c = cell as Soldier;
+            //        Console.WriteLine(c.soldier);
+            //    }
+            //    else if (cell is Bomb)
+            //    {
+            //        Bomb c = cell as Bomb;
+            //        Console.WriteLine("bomb");
+            //    }
+            //    else if (cell is Flag)
+            //    {
+            //        Flag c = cell as Flag;
+            //        Console.WriteLine("flag");
+            //    }
 
-                //Client.PlayerBoard.board[1, 2] = new Cell();
-            }
+            //    //Client.PlayerBoard.board[1, 2] = new Cell();
+            //}
         }
         
 
         public void createBoard()
         {
-            //buttons create temp
-            Client.PlayerBoard = new GameBoard(Client.LoginName);
-            if (Mode != GameMode.No_Mode)
-            {
-                Client.PlayerBoard.CreatePlayerCells(Mode);
-            }
-            else
-            {
-                return;
-            }
+            ////buttons create temp
+            //Client.PlayerBoard = new GameBoard(Client.LoginName);
+            //if (Mode != GameMode.No_Mode)
+            //{
+            //    Client.PlayerBoard.CreatePlayerCells(Mode);
+            //}
+            //else
+            //{
+            //    return;
+            //}
 
-            int k = 0;
-            foreach (Cell C in Client.PlayerBoard.MyPieces)
-            {
-                System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
-                Button.Size = new System.Drawing.Size(72, 80);
-                Button.MouseClick += SelectionControl;
-                Button.Text = "Piece_" + k;
-                Button.FlatStyle = FlatStyle.Flat;
-                Button.Parent = ButtonPanel;
-                //more button settings comming soon....
+            //int k = 0;
+            //foreach (Cell C in Client.PlayerBoard.MyPieces)
+            //{
+            //    System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
+            //    Button.Size = new System.Drawing.Size(72, 80);
+            //    Button.MouseClick += SelectionControl;
+            //    Button.Text = "Piece_" + k;
+            //    Button.FlatStyle = FlatStyle.Flat;
+            //    Button.Parent = ButtonPanel;
+            //    //more button settings comming soon....
                 
-                Button.Tag = C;
-                Button.Name = "Piece_" + k;
-                k++;
-            }
+            //    Button.Tag = C;
+            //    Button.Name = "Piece_" + k;
+            //    k++;
+            //}
 
-            for (int i = 0; i < 10; i++)
-            {
-                for (int j = 0; j < 10; j++)
-                {
-                    Tile Tile = new Tile(i, j);
-                    FlowLayoutPanel Panel = new FlowLayoutPanel();
-                    Panel.BorderStyle = BorderStyle.FixedSingle;
-                    Panel.Parent = BoardPanel;
-                    Panel.Size = new System.Drawing.Size(79, 87);
-                    Panel.MouseClick += SelectionControl;
-                    Panel.Tag = Tile;
-                    Panel.Name = "Tile_" + i + "," + j;
-                }
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    for (int j = 0; j < 10; j++)
+            //    {
+            //        Tile Tile = new Tile(i, j);
+            //        FlowLayoutPanel Panel = new FlowLayoutPanel();
+            //        Panel.BorderStyle = BorderStyle.FixedSingle;
+            //        Panel.Parent = BoardPanel;
+            //        Panel.Size = new System.Drawing.Size(79, 87);
+            //        Panel.MouseClick += SelectionControl;
+            //        Panel.Tag = Tile;
+            //        Panel.Name = "Tile_" + i + "," + j;
+            //    }
+            //}
         }
         
     }
