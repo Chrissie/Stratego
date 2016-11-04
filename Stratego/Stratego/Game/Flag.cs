@@ -9,7 +9,7 @@ namespace Stratego.Game
     [Serializable]
     class Flag : Character
     {
-
+        int number = 0;
         public Flag(string username) : base(username)
         {
         }

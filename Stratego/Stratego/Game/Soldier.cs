@@ -11,12 +11,14 @@ namespace Stratego.Game
     [Serializable]
     class Soldier : Character
     {
-        int number;
+        public int number;
+        public int WalkNumber = 2;
         public SoldierType soldier;
 
         public Soldier(string username, SoldierType soldier) : base(username)
         {
             this.soldier = soldier;
+            setNumber();
         }
 
         public void setNumber()
@@ -49,6 +51,7 @@ namespace Stratego.Game
                     break;
                 case SoldierType.Verkenner:
                     number = 2;
+                    WalkNumber = 11;
                     break;
                 case SoldierType.Spion:
                     number = 1;

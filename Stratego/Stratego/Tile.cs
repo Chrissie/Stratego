@@ -11,6 +11,7 @@ namespace Stratego
     {
         private int X;
         private int Y;
+        public bool dead = false;
 
         private Cell piece;
 
