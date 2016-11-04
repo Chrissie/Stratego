@@ -39,6 +39,18 @@ namespace Stratego.Game
             return RotateBoardRight(RotateBoardRight(board));
         }
 
+        public void CreateFullGameBoard(GameBoard toAdd)
+        {
+            Cell[,] newcells = toAdd.board;
+            for(int i = 0; i< 4; i++)
+            {
+                for(int j = 0; j<10; j++)
+                {
+                    board[i, j] = newcells[i, j];
+                }
+            }
+        }
+
         public Cell[,] RotateBoardRight(Cell[,] board)
         {
             int w = board.GetLength(0);
