@@ -154,10 +154,6 @@ namespace Stratego.Server
             }
             byte[] tosend = BuildMessage(arraya);
             stream.Write(tosend, 0, tosend.Length);
-
-            //    byte[] boardbytes = SendTunnel(PlayerBoard.board);
-            //Debug.WriteLine($"{LoginName}: writing boardbytes: {boardbytes}");
-            //stream.Write(boardbytes, 0, boardbytes.Length);
         }
 
         public byte[] SendTunnel(dynamic command)
