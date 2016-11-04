@@ -9,6 +9,7 @@ namespace Stratego.Game
     [Serializable]
     class Bomb : Character
     {
+        int number = 11;
         public Bomb(string username) : base(username)
         {
             

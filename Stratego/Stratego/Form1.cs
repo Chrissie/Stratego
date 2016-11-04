@@ -23,6 +23,8 @@ namespace Stratego
 
         private readonly Color SELECTIONCOLOR = Color.FromArgb(255, 192, 128);
         private readonly Color DESELECTCOLOR = Color.Transparent;
+        private readonly Color MOVECOLOR = Color.FromArgb(192, 255, 192);
+        private readonly Color HITCOLOR = Color.FromArgb(192, 255, 192);
 
         public Form1(Server.Client client)
         {
@@ -50,18 +52,16 @@ namespace Stratego
             {
                 SelectedControls[0].BackColor = DESELECTCOLOR;
                 SelectedControls[0] = null;
-                return;
             }
             else if (C.Equals(SelectedControls[1]))
             {
 
                 SelectedControls[1].BackColor = DESELECTCOLOR;
                 SelectedControls[1] = null;
-                return;
             }
 
             //selecting the button
-            if (SelectedControls[0] == null)
+            else if (SelectedControls[0] == null)
             {
                 SelectedControls[0] = C;
                 SelectedControls[0].BackColor = SELECTIONCOLOR;
@@ -75,6 +75,36 @@ namespace Stratego
             {
                 SelectMove();
             }
+            //when there is 1 panel selected and state is Game
+            if (SelectedControls[0] != null || SelectedControls[1] != null)
+            {
+                if (StateGame == GameState.Game)
+                {
+                    if (SelectedControls[0] != null)
+                    {
+
+                        MakeMoveTileColor(SelectedControls[0] as Button);
+                    }
+                    else
+                    {
+                        MakeMoveTileColor(SelectedControls[1] as Button);
+                    }
+
+                }
+            }
+            //if nothing is selected
+            if (SelectedControls[0] == null && SelectedControls[1] == null)
+            {
+                ClearColorField();
+            }
+        }
+
+        public void ClearColorField()
+        {
+            foreach(FlowLayoutPanel Panel in BoardPanel.Controls)
+            {
+                Panel.BackColor = DESELECTCOLOR;
+            }
         }
 
         public void SelectMove()
@@ -85,25 +115,143 @@ namespace Stratego
             ///2 volle panels kunnen slaan
             ///
 
-            //wanneer 2 buttons geselecteerd zijn
+            //when 2 buttons are selected
             if (SelectedControls[0] is Button && SelectedControls[1] is Button)
             { 
                 Console.WriteLine("rip");
             }
-            //wanneer 2 panels geselecteerd zijn
+            //when 2 panels are selected
             else if (SelectedControls[0] is FlowLayoutPanel && SelectedControls[1] is FlowLayoutPanel)
             {
                 Console.WriteLine("rip2");
             }
-            //wanneer een button en een panel zijn geseleteerd
+            //when a button and a panel are selected
             else if (SelectedControls[0] is Button && SelectedControls[1] is FlowLayoutPanel)
             {
                 MovePieces(SelectedControls[0] as Button, SelectedControls[1] as FlowLayoutPanel);
             }
-            //wanneer een panel en een button zijn geselecteerd
+            //when a panel and a button are selected
             else if (SelectedControls[0] is FlowLayoutPanel && SelectedControls[1] is Button)
             {
                 MovePieces(SelectedControls[1] as Button, SelectedControls[0] as FlowLayoutPanel);
+            }
+
+        }
+        //colors the tiles when a piece is selected according to the moves it can make
+        public void MakeMoveTileColor(Control button)
+        {
+            if (button is Button)
+            {
+                Soldier soldier = button.Tag as Soldier;
+                Tile SelectedTile = button.Parent.Tag as Tile;
+
+                foreach (FlowLayoutPanel Panel in BoardPanel.Controls)
+                {
+                    Tile Other = Panel.Tag as Tile;
+                    if (Other.PosX > SelectedTile.PosX && Other.PosY == SelectedTile.PosY)
+                    {
+                        if (Other.PosX < (SelectedTile.PosX + soldier.WalkNumber))
+                        {
+                            Panel.BackColor = MOVECOLOR;
+                        }
+                    }
+                    if (Other.PosX < SelectedTile.PosX && Other.PosY == SelectedTile.PosY)
+                    {
+                        if (Other.PosX > (SelectedTile.PosX - soldier.WalkNumber))
+                        {
+                            Panel.BackColor = MOVECOLOR;
+                        }
+                    }
+                    if (Other.PosY > SelectedTile.PosY && Other.PosX == SelectedTile.PosX)
+                    {
+                        if (Other.PosY < (SelectedTile.PosY + soldier.WalkNumber))
+                        {
+                            Panel.BackColor = MOVECOLOR;
+                        }
+                    }
+                    if (Other.PosY < SelectedTile.PosY && Other.PosX == SelectedTile.PosX)
+                    {
+                        if (Other.PosY > (SelectedTile.PosY - soldier.WalkNumber))
+                        {
+                            Panel.BackColor = MOVECOLOR;
+                        }
+                    }
+                }
+
+                foreach (FlowLayoutPanel Panel in BoardPanel.Controls)
+                {
+                    Tile Other = Panel.Tag as Tile;
+                    if (Other.dead)
+                    {
+                        //////////////////////////////////X
+                        if (SelectedTile.PosX > Other.PosX)
+                        {
+                            Panel.BackColor = DESELECTCOLOR;
+                            foreach (FlowLayoutPanel RestPanel in BoardPanel.Controls)
+                            {
+                                Tile RestTile = RestPanel.Tag as Tile;
+                                if (RestTile.PosX < Other.PosX)
+                                {
+                                    if (RestTile.PosY == Other.PosY)
+                                    {
+                                        RestPanel.BackColor = RestPanel.BackColor = DESELECTCOLOR;
+                                        
+                                    }
+                                }
+                            }
+                        }
+                        //////////////////////////////////X
+                        if (SelectedTile.PosX < Other.PosX)
+                        {
+                            Panel.BackColor = DESELECTCOLOR;
+                            foreach (FlowLayoutPanel RestPanel in BoardPanel.Controls)
+                            {
+                                Tile RestTile = RestPanel.Tag as Tile;
+                                if (RestTile.PosX > Other.PosX)
+                                {
+                                    if (RestTile.PosY == Other.PosY)
+                                    {
+                                        RestPanel.BackColor = RestPanel.BackColor = DESELECTCOLOR;
+                                        
+                                    }
+                                }
+                            }
+                        }
+                        //////////////////////////////////Y
+                        if (SelectedTile.PosY > Other.PosY)
+                        {
+                            Panel.BackColor = DESELECTCOLOR;
+                            foreach (FlowLayoutPanel RestPanel in BoardPanel.Controls)
+                            {
+                                Tile RestTile = RestPanel.Tag as Tile;
+                                if (RestTile.PosY < Other.PosY)
+                                {
+                                    if (RestTile.PosX == Other.PosX)
+                                    {
+                                        RestPanel.BackColor = RestPanel.BackColor = DESELECTCOLOR;
+                                        
+                                    }
+                                }
+                            }
+                        }
+                        //////////////////////////////////Y
+                        if (SelectedTile.PosY < Other.PosY)
+                        {
+                            Panel.BackColor = DESELECTCOLOR;
+                            foreach (FlowLayoutPanel RestPanel in BoardPanel.Controls)
+                            {
+                                Tile RestTile = RestPanel.Tag as Tile;
+                                if (RestTile.PosY > Other.PosY)
+                                {
+                                    if (RestTile.PosX == Other.PosX)
+                                    {
+                                        RestPanel.BackColor = DESELECTCOLOR;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -122,7 +270,7 @@ namespace Stratego
                     canMove = false;
                 }
             }
-
+            //check if bomb or flag want to move
             if (StateGame == GameState.Game)
             {
                 if (button.Tag is Bomb || button.Tag is Flag)
@@ -278,6 +426,7 @@ namespace Stratego
                         q == 52|| q == 53|| q == 56|| q == 57)
                     {
                         Panel.BorderStyle = BorderStyle.None;
+                        Tile.dead = true;
                     }
                     else
                     {
