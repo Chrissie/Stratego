@@ -105,6 +105,8 @@ namespace Stratego
             foreach(FlowLayoutPanel Panel in BoardPanel.Controls)
             {
                 Panel.BackColor = DESELECTCOLOR;
+                Tile T = Panel.Tag as Tile;
+                T.CellMoveLine = false;
             }
         }
 
