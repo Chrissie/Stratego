@@ -30,7 +30,6 @@ namespace Stratego.Server
         {
             LoginName= loginName;
             PlayerBoard = new GameBoard(LoginName);
-            //PlayerBoard.Test();
             try
             {
                 int tries = 0;
