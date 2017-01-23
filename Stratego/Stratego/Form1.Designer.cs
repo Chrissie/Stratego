@@ -34,6 +34,7 @@
             this.UpdateGUIButton = new System.Windows.Forms.Button();
             this.SendBoardButton = new System.Windows.Forms.Button();
             this.ChangeStateButton = new System.Windows.Forms.Button();
+            this.ReadyButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // BoardPanel
@@ -90,6 +91,16 @@
             this.ChangeStateButton.UseVisualStyleBackColor = true;
             this.ChangeStateButton.Click += new System.EventHandler(this.button5_Click);
             // 
+            // ReadyButton
+            // 
+            this.ReadyButton.Location = new System.Drawing.Point(1334, 184);
+            this.ReadyButton.Name = "ReadyButton";
+            this.ReadyButton.Size = new System.Drawing.Size(86, 38);
+            this.ReadyButton.TabIndex = 10;
+            this.ReadyButton.Text = "Ready to game!";
+            this.ReadyButton.UseVisualStyleBackColor = true;
+            this.ReadyButton.Click += new System.EventHandler(this.ReadyButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -97,6 +108,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1441, 598);
+            this.Controls.Add(this.ReadyButton);
             this.Controls.Add(this.ChangeStateButton);
             this.Controls.Add(this.SendBoardButton);
             this.Controls.Add(this.UpdateGUIButton);
@@ -117,6 +129,7 @@
         private System.Windows.Forms.Button UpdateGUIButton;
         private System.Windows.Forms.Button SendBoardButton;
         private System.Windows.Forms.Button ChangeStateButton;
+        private System.Windows.Forms.Button ReadyButton;
     }
 }
 

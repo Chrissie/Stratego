@@ -24,7 +24,7 @@ namespace Stratego.Server
         public string LoginName;
 
         public Game.GameBoard PlayerBoard;
-        public bool IsPlayersTurn = true;
+        public bool IsPlayersTurn = false;
 
         public Client(string ip = "localhost" , string loginName = "Client")
         {
@@ -125,6 +125,12 @@ namespace Stratego.Server
                     Connected = false;
                 }
             }
+        }
+
+        public void WriteToServer(string toWrite)
+        {
+            byte[] bytestowrite = BuildMessage(toWrite);
+            stream.Write(bytestowrite, 0, bytestowrite.Length);
         }
 
         public void WriteFirstMessageToServer()

@@ -106,26 +106,40 @@ namespace Stratego.Server
                 Debug.WriteLine("Login: " + login);
             }
 
+            bool player1ready = false;
+            bool player2ready = false;
             bool player1turn = true;
 
             while (client1.Connected && client2.Connected)
             {
+                dynamic buffer = null;
                 try
                 {
-                    if (player1turn)
+                    buffer = ReadFromClient(player1stream);
+                    if (Encoding.Default.GetString(buffer).Equals("Ready")) player1ready = true;
+                    buffer = ReadFromClient(player2stream);
+                    if (Encoding.Default.GetString(buffer).Equals("Ready")) player2ready = true;
+
+                    while (player1ready && player2ready)
                     {
-                        HandleTurn(player1stream, player2stream);
+                        if (player1turn)
+                        {
+                            HandleTurn(player1stream, player2stream);
+                        }
+                        else
+                        {
+                            HandleTurn(player2stream, player1stream);
+                        }
+                        player1turn = !player1turn;
                     }
-                    else
-                    {
-                        HandleTurn(player2stream, player1stream);
-                    }
-                    player1turn = !player1turn;
                 }
+
                 catch (IOException e)
                 {
                     Debug.WriteLine("A player disconnected " + e.Message);
                 }
+
+
             }
             // Shutdown and end connection.
             client1.Close();

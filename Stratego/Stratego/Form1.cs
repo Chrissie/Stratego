@@ -526,6 +526,12 @@ namespace Stratego
                 Client.SendGameBoard();
             }
         }
+
+        private void ReadyButton_Click(object sender, EventArgs e)
+        {
+            StateGame = GameState.Game;
+            Client.WriteToServer("Ready");
+        }
     }
 }
 
