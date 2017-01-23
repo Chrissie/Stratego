@@ -481,6 +481,45 @@ namespace Stratego
             }
         }
 
+        public void HitPlayer(Button button1, Button button2)
+        {
+            if (!EnemyCheck(button1))
+            {
+                Soldier playerSoldier = button1.Tag as Soldier;
+                Soldier enemySoldier = button2.Tag as Soldier;
+
+                if (playerSoldier.number > enemySoldier.number)
+                {
+                    Control C;
+                    C = button2.Parent;
+                    C.Controls.Clear();
+                    button1.Parent = C;
+                    
+                }
+                else if (playerSoldier.number < enemySoldier.number)
+                {
+                    Control C;
+                    C = button1.Parent;
+                    C.Controls.Clear();
+                    //show enemy piece
+                }
+                else
+                {
+                    button1.Parent.Controls.Clear();
+                    button2.Parent.Controls.Clear();
+                    //put enemy piece in buttonpanel
+                }
+            }
+            else
+            {
+                //Nothit
+            }
+
+            //button deselect
+            SelectionControl(button1, null);
+            SelectionControl(button2, null);
+        }
+
         public bool EnemyCheck(Button B)
         {
             Character Cha = B.Tag as Character;
