@@ -156,8 +156,8 @@ namespace Stratego.Server
                         Thread.Sleep(2000);
                         GameBoard NewGameBoard = new GameBoard("lmao");
                         NewGameBoard.board = cells;
-                        NewGameBoard.RotateBoard180();
                         ServerGameBoard.CreateFullGameBoard(NewGameBoard);
+                        ServerGameBoard.RotateBoard180();
 
                         string arrayasstring = "";
                         using (MemoryStream ms = new MemoryStream())
