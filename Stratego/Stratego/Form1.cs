@@ -39,7 +39,7 @@ namespace Stratego
             ButtonPanel.Tag = new Tile(101, 101);
             createBoard();
             //testcode
-            //Client.PlayerBoard.Test();
+            Client.PlayerBoard.Test();
         }
         
         
@@ -120,8 +120,8 @@ namespace Stratego
 
             //when 2 buttons are selected
             if (SelectedControls[0] is Button && SelectedControls[1] is Button)
-            { 
-                Console.WriteLine("rip");
+            {
+                HitPlayer(SelectedControls[0] as Button, SelectedControls[1] as Button);
             }
             //when 2 panels are selected
             else if (SelectedControls[0] is FlowLayoutPanel && SelectedControls[1] is FlowLayoutPanel)
@@ -147,8 +147,9 @@ namespace Stratego
             if (button is Button)
             {
                 Soldier soldier = button.Tag as Soldier;
+                if (soldier == null || button.Parent == null) { return; }
+
                 Tile SelectedTile = button.Parent.Tag as Tile;
-                if (soldier == null){return;}
                 if (EnemyCheck(button as Button)) { return; }
                 
                 foreach (FlowLayoutPanel Panel in BoardPanel.Controls)
@@ -302,7 +303,10 @@ namespace Stratego
                 if (button.Tag is Bomb || button.Tag is Flag)
                 {
                     canMove = false;
+                    SelectionControl(button, null);
+                    SelectionControl(panel, null);
                     Console.WriteLine("bomb or flag cannot be moved in this state");
+                    return;
                 }
             }
             //check if panel is used
@@ -487,6 +491,13 @@ namespace Stratego
             {
                 Soldier playerSoldier = button1.Tag as Soldier;
                 Soldier enemySoldier = button2.Tag as Soldier;
+                if (SelectedOwnPieces(button1, button2) || !Client.IsPlayersTurn)
+                {
+                    //button deselect
+                    SelectionControl(button1, null);
+                    SelectionControl(button2, null);
+                    return;
+                }
 
                 if (playerSoldier.number > enemySoldier.number)
                 {
@@ -518,6 +529,11 @@ namespace Stratego
             //button deselect
             SelectionControl(button1, null);
             SelectionControl(button2, null);
+
+            if (StateGame == GameState.Game)
+            {
+                Client.IsPlayersTurn = false;
+            }
         }
 
         public bool EnemyCheck(Button B)
@@ -531,6 +547,20 @@ namespace Stratego
                 return true;
             }
 
+        }
+
+        public bool SelectedOwnPieces(Button A, Button B)
+        {
+            Character Cha1 = A.Tag as Character;
+            Character Cha2 = B.Tag as Character;
+            if (Cha1.username.Equals(Client.LoginName) && Cha2.username.Equals(Client.LoginName))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
