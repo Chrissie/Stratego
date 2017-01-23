@@ -403,7 +403,7 @@ namespace Stratego
                     }
                 }
             }
-            if (!Client.IsPlayersTurn) button3.Text = "Not your turn"; else button3.Text = "Send gameboard";
+            if (!Client.IsPlayersTurn) SendBoardButton.Text = "Not your turn"; else SendBoardButton.Text = "Send gameboard";
         }
         
         public void createBoard()
@@ -502,7 +502,7 @@ namespace Stratego
             UpdateGUI();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button5_Click(object sender, EventArgs e)
         {
             if (StateGame == GameState.PiecePlacement)
             {
