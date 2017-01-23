@@ -12,6 +12,7 @@ namespace Stratego
         private int X;
         private int Y;
         public bool dead = false;
+        public bool CellMoveLine = false;
 
         private Cell piece;
 

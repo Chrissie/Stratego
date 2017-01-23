@@ -47,6 +47,7 @@ namespace Stratego
         {
             //check if button is already selected
             Control C = sender as Control;
+            
             if (C.Equals(SelectedControls[0]))
             {
                 SelectedControls[0].BackColor = DESELECTCOLOR;
@@ -70,6 +71,7 @@ namespace Stratego
                 SelectedControls[1] = C;
                 SelectedControls[1].BackColor = SELECTIONCOLOR;
             }
+            ////////
             if (SelectedControls[0] != null && SelectedControls[1] != null)
             {
                 SelectMove();
@@ -139,11 +141,14 @@ namespace Stratego
         //colors the tiles when a piece is selected according to the moves it can make
         public void MakeMoveTileColor(Control button)
         {
+            //select tiles in line with the selected tile
             if (button is Button)
             {
                 Soldier soldier = button.Tag as Soldier;
                 Tile SelectedTile = button.Parent.Tag as Tile;
-
+                if (soldier == null){return;}
+                if (EnemyCheck(button as Button)) { return; }
+                
                 foreach (FlowLayoutPanel Panel in BoardPanel.Controls)
                 {
                     Tile Other = Panel.Tag as Tile;
@@ -152,6 +157,7 @@ namespace Stratego
                         if (Other.PosX < (SelectedTile.PosX + soldier.WalkNumber))
                         {
                             Panel.BackColor = MOVECOLOR;
+                            Other.CellMoveLine = true;
                         }
                     }
                     if (Other.PosX < SelectedTile.PosX && Other.PosY == SelectedTile.PosY)
@@ -159,6 +165,7 @@ namespace Stratego
                         if (Other.PosX > (SelectedTile.PosX - soldier.WalkNumber))
                         {
                             Panel.BackColor = MOVECOLOR;
+                            Other.CellMoveLine = true;
                         }
                     }
                     if (Other.PosY > SelectedTile.PosY && Other.PosX == SelectedTile.PosX)
@@ -166,6 +173,7 @@ namespace Stratego
                         if (Other.PosY < (SelectedTile.PosY + soldier.WalkNumber))
                         {
                             Panel.BackColor = MOVECOLOR;
+                            Other.CellMoveLine = true;
                         }
                     }
                     if (Other.PosY < SelectedTile.PosY && Other.PosX == SelectedTile.PosX)
@@ -173,10 +181,12 @@ namespace Stratego
                         if (Other.PosY > (SelectedTile.PosY - soldier.WalkNumber))
                         {
                             Panel.BackColor = MOVECOLOR;
+                            Other.CellMoveLine = true;
                         }
                     }
                 }
 
+                //deselect tiles around dead tiles
                 foreach (FlowLayoutPanel Panel in BoardPanel.Controls)
                 {
                     Tile Other = Panel.Tag as Tile;
@@ -194,7 +204,7 @@ namespace Stratego
                                     if (RestTile.PosY == Other.PosY)
                                     {
                                         RestPanel.BackColor = RestPanel.BackColor = DESELECTCOLOR;
-                                        
+                                        RestTile.CellMoveLine = false;
                                     }
                                 }
                             }
@@ -211,7 +221,7 @@ namespace Stratego
                                     if (RestTile.PosY == Other.PosY)
                                     {
                                         RestPanel.BackColor = RestPanel.BackColor = DESELECTCOLOR;
-                                        
+                                        RestTile.CellMoveLine = false;
                                     }
                                 }
                             }
@@ -228,7 +238,7 @@ namespace Stratego
                                     if (RestTile.PosX == Other.PosX)
                                     {
                                         RestPanel.BackColor = RestPanel.BackColor = DESELECTCOLOR;
-                                        
+                                        RestTile.CellMoveLine = false;
                                     }
                                 }
                             }
@@ -245,6 +255,7 @@ namespace Stratego
                                     if (RestTile.PosX == Other.PosX)
                                     {
                                         RestPanel.BackColor = DESELECTCOLOR;
+                                        RestTile.CellMoveLine = false;
                                     }
                                 }
                             }
@@ -254,13 +265,27 @@ namespace Stratego
             }
         }
 
+        //moves a piece to the selected panel by the rules
         public void MovePieces(Button button, FlowLayoutPanel panel)
         {
             bool canMove = true;
-            //check for placement in own half of the field
+            Tile T = panel.Tag as Tile;
+
+            if (EnemyCheck(button))
+            {
+                canMove = false;
+            }
+
+            //check if it's playersturn and in game
+            if (!Client.IsPlayersTurn && StateGame == GameState.Game)
+            {
+                canMove = false;
+            }
+
+            //check for placement in own half of the field and in piece placement
             if (StateGame == GameState.PiecePlacement)
             {
-                Tile T = panel.Tag as Tile;
+                
                 string a = "" + T.PosX + T.PosY;
                 int q = int.Parse(a);
                 if (q <= 59)
@@ -269,7 +294,7 @@ namespace Stratego
                     canMove = false;
                 }
             }
-            //check if bomb or flag want to move
+            //check if bomb or flag want to move and in game
             if (StateGame == GameState.Game)
             {
                 if (button.Tag is Bomb || button.Tag is Flag)
@@ -278,21 +303,33 @@ namespace Stratego
                     Console.WriteLine("bomb or flag cannot be moved in this state");
                 }
             }
-            //check op  volle panel
+            //check if panel is used
             if (panel.Controls.Count > 0 && panel.Controls.Count < 2)
             {
                 Console.WriteLine("Panel must be empty");
+                canMove = false;
+            }
+
+            //check if the panel is in line with the piece and in game
+            if (!T.CellMoveLine && StateGame == GameState.Game)
+            {
+                canMove = false;
             }
 
             else if(canMove)
             {
                 button.Parent = panel;
+                if (StateGame == GameState.Game)
+                {
+                    Client.IsPlayersTurn = false;
+                }
             }
 
             SelectionControl(button, null);
             SelectionControl(panel, null);
         }
-
+        
+        //sends current gameboard to the server
         public void UpdateGameboard()
         {
             Client.PlayerBoard.board = new Cell[10, 10];
@@ -308,6 +345,7 @@ namespace Stratego
             }
         }
 
+        //updates the gui according to the gameboard
         public void UpdateGUI()
         {
             foreach (FlowLayoutPanel f in BoardPanel.Controls)
@@ -367,10 +405,10 @@ namespace Stratego
             }
             if (!Client.IsPlayersTurn) button3.Text = "Not your turn"; else button3.Text = "Send gameboard";
         }
-
-
+        
         public void createBoard()
         {
+            //creates buttons for this player and shows them in buttonpanel
             //buttons create temp
             Client.PlayerBoard = new GameBoard(Client.LoginName);
             if (Mode != GameMode.No_Mode)
@@ -391,9 +429,8 @@ namespace Stratego
                 Button.MouseClick += SelectionControl;
                 Button.Text = "Piece_" + k;
                 Button.FlatStyle = FlatStyle.Flat;
-                Button.Parent = ButtonPanel;
-                
                 Button.Tag = C;
+
                 if (C is Soldier)
                 {
                     Soldier c = C as Soldier;
@@ -409,9 +446,10 @@ namespace Stratego
                     Flag c = C as Flag;
                     Button.Text = "Vlag";
                 }
+                Button.Parent = ButtonPanel;
                 k++;
             }
-            
+            //creates panels for the gui and shows them in boardpanel
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
@@ -441,6 +479,19 @@ namespace Stratego
             }
         }
 
+        public bool EnemyCheck(Button B)
+        {
+            Character Cha = B.Tag as Character;
+            if (Cha.username.Equals(Client.LoginName))
+            {
+                return false;
+            }
+            else{
+                return true;
+            }
+
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             UpdateGameboard();
@@ -449,6 +500,20 @@ namespace Stratego
         private void button2_Click(object sender, EventArgs e)
         {
             UpdateGUI();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (StateGame == GameState.PiecePlacement)
+            {
+                StateGame = GameState.Game;
+                return;
+            }
+            if (StateGame == GameState.Game)
+            {
+                StateGame = GameState.PiecePlacement;
+                return;
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)

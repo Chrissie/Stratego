@@ -24,7 +24,7 @@ namespace Stratego.Server
         public string LoginName;
 
         public Game.GameBoard PlayerBoard;
-        public bool IsPlayersTurn = false;
+        public bool IsPlayersTurn = true;
 
         public Client(string ip = "localhost" , string loginName = "Client")
         {

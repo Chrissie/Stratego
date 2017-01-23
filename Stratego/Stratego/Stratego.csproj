@@ -81,7 +81,6 @@
     <Compile Include="Game\Bomb.cs" />
     <Compile Include="Game\Cell.cs" />
     <Compile Include="Game\Character.cs" />
-    <Compile Include="Game\Player.cs" />
     <Compile Include="ServerForm.cs">
       <SubType>Form</SubType>
     </Compile>
