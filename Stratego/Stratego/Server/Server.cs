@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
 
@@ -18,6 +19,7 @@ namespace Stratego.Server
     {
         public string lastinfo = "";
         public List<string> users = new List<string>();
+        GameBoard ServerGameBoard = new GameBoard("serverboard");
 
         public Server()
         {
@@ -41,7 +43,6 @@ namespace Stratego.Server
                 // Start listening for client requests.
                 server.Start();
 
-                int i = 0;
                 // Enter the listening loop.
                 while (users.Count <= 10)
                 {
@@ -88,7 +89,6 @@ namespace Stratego.Server
             NetworkStream player1stream = client1.GetStream();
             NetworkStream player2stream = client2.GetStream();
 
-            GameBoard ServerGameBoard = new GameBoard("serverboard");
             if (client1.Connected)
             {
                 // Read the login name from the client.
@@ -110,88 +110,63 @@ namespace Stratego.Server
 
             while (client1.Connected && client2.Connected)
             {
-                // Wait for a message from the client and stay blocked until then.
-                dynamic Json = null;
                 try
                 {
                     if (player1turn)
                     {
-                        WriteToClient(player1stream, "yourturn");
-                        Json = ReadFromClient(player1stream);
-                        Cell[,] cells;
-                        using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Json)))
-                        {
-                            SoapFormatter formatter = new SoapFormatter();
-                            cells = formatter.Deserialize(ms) as Cell[,];
-                        }
-                        Thread.Sleep(2000);
-                        ServerGameBoard.board = cells;
-                        ServerGameBoard.RotateBoard180();
-
-                        string arrayasstring = "";
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            SoapFormatter formatter = new SoapFormatter();
-                            formatter.Serialize(ms, ServerGameBoard.board);
-                            arrayasstring = Encoding.UTF8.GetString(ms.ToArray());
-                        }
-                        byte[] tosend1 = BuildMessage("board");
-                        player2stream.Write(tosend1, 0, tosend1.Length);
-
-                        byte[] tosend2 = BuildMessage(arrayasstring);
-                        player1stream.Write(tosend2, 0, tosend2.Length);
-                        WriteToClient(player2stream, Json);
-                        player1turn = !player1turn;
+                        HandleTurn(player1stream, player2stream);
                     }
                     else
                     {
-                        WriteToClient(player2stream, "yourturn");
-                        Json = ReadFromClient(player2stream);
-                        Cell[,] cells;
-                        using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(Json)))
-                        {
-                            SoapFormatter formatter = new SoapFormatter();
-                            cells = formatter.Deserialize(ms) as Cell[,];
-                        }
-                        Thread.Sleep(2000);
-                        GameBoard NewGameBoard = new GameBoard("lmao");
-                        NewGameBoard.board = cells;
-                        ServerGameBoard.CreateFullGameBoard(NewGameBoard);
-                        ServerGameBoard.RotateBoard180();
-
-                        string arrayasstring = "";
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            SoapFormatter formatter = new SoapFormatter();
-                            formatter.Serialize(ms, ServerGameBoard.board);
-                            arrayasstring = Encoding.UTF8.GetString(ms.ToArray());
-                        }
-                        byte[] tosend1 = BuildMessage("board");
-                        player2stream.Write(tosend1, 0, tosend1.Length);
-
-                        byte[] tosend2 = BuildMessage(arrayasstring);
-                        player2stream.Write(tosend2, 0, tosend2.Length);
-                        WriteToClient(player1stream, Json);
-                        player1turn = !player1turn;
+                        HandleTurn(player2stream, player1stream);
                     }
-
+                    player1turn = !player1turn;
                 }
                 catch (IOException e)
                 {
                     Debug.WriteLine("A player disconnected " + e.Message);
                 }
-                //catch (RuntimeBinderException)
-                //{
-                //    Debug.WriteLine("Client disconnected because runtimebinder ");
-                //    client1.Close();
-                //    client2.Close();
-                //}
             }
-
             // Shutdown and end connection.
             client1.Close();
             client2.Close();
             Debug.WriteLine("Connection Closed");
+        }
+
+        public void HandleTurn(NetworkStream player1, NetworkStream player2)
+        {
+            WriteToClient(player1, "yourturn");
+
+            dynamic Json = null;
+            Json = ReadFromClient(player1);
+            if (Json.ToString().StartsWith("board"))
+            {
+                Cell[,] cells;
+                string boardstring = (string)Json;
+                boardstring = Regex.Split(boardstring, "board-")[1];
+
+                using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(boardstring)))
+                {
+                    ms.Seek(0, SeekOrigin.Begin);
+                    SoapFormatter formatter = new SoapFormatter();
+                    cells = formatter.Deserialize(ms) as Cell[,];
+                }
+                Thread.Sleep(2000);
+                ServerGameBoard.board = cells;
+                ServerGameBoard.RotateBoard180();
+
+                string servergameboardstring = "";
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ms.Seek(0, SeekOrigin.Begin);
+                    SoapFormatter formatter = new SoapFormatter();
+                    formatter.Serialize(ms, ServerGameBoard.board);
+                    servergameboardstring = Encoding.UTF8.GetString(ms.ToArray());
+                }
+                //Niet echt nodig om naar zelfde speler te schrijven
+                //WriteToClient(player1, "board-" + servergameboardstring);
+                WriteToClient(player2, "board-" + servergameboardstring);
+            }
         }
 
         // Read from the Stream.

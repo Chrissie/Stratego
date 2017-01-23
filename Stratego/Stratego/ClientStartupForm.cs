@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -46,10 +47,13 @@ namespace Stratego
         private void startbutton_Click(object sender, EventArgs e)
         {
             //Player p = new Player(gebruikersnaam_Textbox.Text);
-            Server.Client client = new Server.Client(ipAdress_textbox.Text ,gebruikersnaam_Textbox.Text);
-            Hide();
-            Form1 form = new Form1(client);
-            form.Show();
+            Server.Client client = new Server.Client(ipAdress_textbox.Text, gebruikersnaam_Textbox.Text);
+            if (client.Connected)
+            {
+                Form1 form = new Form1(client);
+                Hide();
+                form.Show();
+            }
         }
 
         private void ipAdress_textbox_MouseClick(object sender, MouseEventArgs e)
