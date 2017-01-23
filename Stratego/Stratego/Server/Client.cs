@@ -12,12 +12,13 @@ using System.IO;
 using System.Xml.Serialization;
 using Stratego.Game;
 using System.Runtime.Serialization.Formatters.Soap;
+using System.Text.RegularExpressions;
 
 namespace Stratego.Server
 {
     public class Client
     {
-        bool connected = false;
+        public bool Connected = false;
         TcpClient tcpClient;
         NetworkStream stream;
         public string LoginName;
@@ -29,20 +30,20 @@ namespace Stratego.Server
         {
             LoginName= loginName;
             PlayerBoard = new GameBoard(LoginName);
-            PlayerBoard.Test();
+            //PlayerBoard.Test();
             try
             {
                 int tries = 0;
                 do
                 {
-                    Debug.WriteLine("Not connected");
+                    Debug.WriteLine("Not Connected");
                     Debug.WriteLine(ip);
 
                     ConnectServer(ip, "Connected");
                     tries++;
-                } while (tries < 10 && !connected);
+                } while (tries < 10 && !Connected);
 
-                if (connected)
+                if (Connected)
                 {
                     Debug.WriteLine("Client Connected");
                     Thread reader = new Thread(ReadFromServer);
@@ -72,7 +73,7 @@ namespace Stratego.Server
                 byte[] bytes = BuildMessage(LoginName);
                 //stream.Write(bytes, 0, bytes.Length);
                 Debug.WriteLine("Send Client");
-                connected = true;  
+                Connected = true;  
             }
             catch (SocketException e)
             {
@@ -82,7 +83,7 @@ namespace Stratego.Server
 
         public void ReadFromServer(object obj)
         {
-            while (connected)
+            while (Connected)
             {
                 try
                 {
@@ -94,46 +95,38 @@ namespace Stratego.Server
                         Debug.WriteLine($"{LoginName}: Server returns: " + returnData);
                         if (returnData.StartsWith("chat"))
                         {
-
+                            string chat = returnData.Split('-')[1];
+                            Debug.WriteLine(chat);
                         }
                         if (returnData.StartsWith("board"))
                         {
-                            //update client gameboard
-                            byte[] bytes2 = Read(stream);
+                            string boardstring = Regex.Split(returnData, "board-")[1];
 
                             Cell[,] cells;
-                            using (MemoryStream ms = new MemoryStream(bytes2))
+                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(boardstring)))
                             {
+                                ms.Seek(0, SeekOrigin.Begin);
                                 SoapFormatter formatter = new SoapFormatter();
                                 cells = formatter.Deserialize(ms) as Cell[,];
                             }
                             PlayerBoard.board = cells;
                             Debug.WriteLine("Received new gameboard from server! " + PlayerBoard.ToString());
                         }
-                        if (returnData.StartsWith("yourturn"))
+                        if (returnData.Equals("yourturn"))
                         {
                             IsPlayersTurn = true;
                             //SendGameBoard();
-
                         }
-
-                        //if (IsPlayersTurn)
-                        //{
-                        //    Debug.WriteLine($"{LoginName}: My turn, sending the gameboard");
-                        //    SendGameBoard();
-                        //    IsPlayersTurn = !IsPlayersTurn;
-                        //}
                     }
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     Debug.WriteLine("Server disconnected");
                     stream.Close();
-                    connected = false;
+                    Connected = false;
                 }
             }
         }
-
 
         public void WriteFirstMessageToServer()
         {
@@ -147,21 +140,23 @@ namespace Stratego.Server
                 Debug.WriteLine("Cannot write data to stream");
                 tcpClient.Close();
                 stream.Close();
-                connected = false;
+                Connected = false;
             }
         }
 
         public void SendGameBoard()
         {
-            string arraya = "";
+            string arraya = "board-";
             using (MemoryStream ms = new MemoryStream())
             {
+                ms.Seek(0, SeekOrigin.Begin);
                 SoapFormatter formatter = new SoapFormatter();
                 formatter.Serialize(ms, PlayerBoard.board);
-                arraya = Encoding.UTF8.GetString(ms.ToArray());
+                arraya += Encoding.UTF8.GetString(ms.ToArray());
             }
             byte[] tosend = BuildMessage(arraya);
             stream.Write(tosend, 0, tosend.Length);
+            IsPlayersTurn = false;
         }
 
         public byte[] SendTunnel(dynamic command)

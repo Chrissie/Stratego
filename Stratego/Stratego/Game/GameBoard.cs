@@ -27,16 +27,15 @@ namespace Stratego.Game
             this.Clientname = Clientname;
         }
 
-        public static GameBoard FromCells(Cell[,] cells , string clientname)
+        public GameBoard(string Clientname, Cell[,] cells)
         {
-            GameBoard g = new GameBoard(clientname);
-            g.board = cells;
-            return g;
+            this.Clientname = Clientname;
+            board = cells;
         }
 
-        public Cell[,] RotateBoard180()
+        public void RotateBoard180()
         {
-            return RotateBoardRight(RotateBoardRight(board));
+            board = RotateBoardRight(RotateBoardRight(board));
         }
 
         public void CreateFullGameBoard(GameBoard toAdd)
@@ -103,7 +102,7 @@ namespace Stratego.Game
                 }
             }
            // PrintBoard();
-            board = RotateBoard180();
+            //board = RotateBoard180();
            //PrintBoard();
         }
 

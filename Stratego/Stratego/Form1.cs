@@ -34,13 +34,12 @@ namespace Stratego
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
-            //testcode
             Mode = GameMode.Normal;
             ButtonPanel.MouseClick += SelectionControl;
             ButtonPanel.Tag = new Tile(101, 101);
             createBoard();
-            Client.PlayerBoard.Test();
+            //testcode
+            //Client.PlayerBoard.Test();
         }
         
         
@@ -343,10 +342,6 @@ namespace Stratego
 
                     Client.PlayerBoard.board[tile.PosX, tile.PosY] = cell;
                 }
-                if (Client.IsPlayersTurn)
-                {
-                    Client.SendGameBoard();
-                }
             }
         }
 
@@ -408,7 +403,7 @@ namespace Stratego
                     }
                 }
             }
-
+            if (!Client.IsPlayersTurn) button3.Text = "Not your turn"; else button3.Text = "Send gameboard";
         }
         
         public void createBoard()
@@ -518,6 +513,15 @@ namespace Stratego
             {
                 StateGame = GameState.PiecePlacement;
                 return;
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            UpdateGameboard();
+            if (Client.IsPlayersTurn)
+            {
+                Client.SendGameBoard();
             }
         }
     }
