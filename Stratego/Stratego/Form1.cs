@@ -323,7 +323,7 @@ namespace Stratego
                 button.Parent = panel;
                 if (StateGame == GameState.Game)
                 {
-                    Client.IsPlayersTurn = false;
+                    //Client.IsPlayersTurn = false;
                 }
             }
 
@@ -568,6 +568,7 @@ namespace Stratego
 
         private void ReadyButton_Click(object sender, EventArgs e)
         {
+            UpdateGameboard();
             StateGame = GameState.Game;
             Client.WriteToServer("Ready");
         }

@@ -82,6 +82,7 @@ namespace Stratego.Server
 
         public void ReadFromServer(object obj)
         {
+            int i = 0;
             while (Connected)
             {
                 try
@@ -108,7 +109,9 @@ namespace Stratego.Server
                                 SoapFormatter formatter = new SoapFormatter();
                                 cells = formatter.Deserialize(ms) as Cell[,];
                             }
-                            PlayerBoard.board = cells;
+                            if(i == 0)PlayerBoard.CreateFullGameBoard(cells);
+                            else PlayerBoard.board = cells;
+                             
                             Debug.WriteLine("Received new gameboard from server! " + PlayerBoard.ToString());
                         }
                         if (returnData.Equals("yourturn"))
