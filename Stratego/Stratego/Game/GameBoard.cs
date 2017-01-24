@@ -89,7 +89,7 @@ namespace Stratego.Game
                 {
                     if (rand.NextDouble() > 0.5)
                     {
-                        board[i, j] = new Soldier("Maarschalk", SoldierType.Verkenner);
+                        board[i, j] = new Soldier("Maarschalk", SoldierType.Maarschalk);
                     }
                     else if (rand.NextDouble() > 0.2)
                     {
@@ -97,7 +97,7 @@ namespace Stratego.Game
                     }
                     else
                     {
-                        board[i, j] = new Soldier("Generaal", SoldierType.Generaal);
+                        board[i, j] = new Bomb("Bom");
                     }
                 }
             }

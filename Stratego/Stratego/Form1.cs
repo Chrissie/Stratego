@@ -20,11 +20,14 @@ namespace Stratego
         private GameMode Mode;
         private Server.Client Client;
         private Control[] SelectedControls = new Control[2];
+        private Button ButtonToHide;
 
         private readonly Color SELECTIONCOLOR = Color.FromArgb(255, 192, 128);
         private readonly Color DESELECTCOLOR = Color.Transparent;
         private readonly Color MOVECOLOR = Color.FromArgb(192, 255, 192);
         private readonly Color HITCOLOR = Color.FromArgb(192, 255, 192);
+
+        Timer HideButtonTextTimer = new Timer();
 
         public Form1(Server.Client client)
         {
@@ -38,8 +41,10 @@ namespace Stratego
             ButtonPanel.MouseClick += SelectionControl;
             ButtonPanel.Tag = new Tile(101, 101);
             createBoard();
+            HideButtonTextTimer.Interval = 3000;
+            HideButtonTextTimer.Tick += HideButtonText;
             //testcode
-            Client.PlayerBoard.Test();
+            //Client.PlayerBoard.Test();
         }
         
         
@@ -327,7 +332,7 @@ namespace Stratego
                 button.Parent = panel;
                 if (StateGame == GameState.Game)
                 {
-                    Client.IsPlayersTurn = false;
+                    //Client.IsPlayersTurn = false;
                 }
             }
 
@@ -400,8 +405,8 @@ namespace Stratego
                         }
                         if (!username.Equals(Client.LoginName))
                         {
-                            Button.Text = "EnemyPiece_" + q;
-                            Button.Name = "EnemyPiece_" + q;
+                            Button.Text = "EnemyPiece";
+                            Button.Name = "EnemyPiece";
                         }
 
                         Button.Tag = cell;
@@ -433,7 +438,7 @@ namespace Stratego
                 System.Windows.Forms.Button Button = new System.Windows.Forms.Button();
                 Button.Size = new System.Drawing.Size(72, 80);
                 Button.MouseClick += SelectionControl;
-                Button.Text = "Piece_" + k;
+                //Button.Text = "Piece_" + k;
                 Button.FlatStyle = FlatStyle.Flat;
                 Button.Tag = C;
 
@@ -487,33 +492,53 @@ namespace Stratego
 
         public void HitPlayer(Button button1, Button button2)
         {
-            if (!EnemyCheck(button1))
+            // first selected player
+            if (!EnemyCheck(button1) && PieceInLine(button2))
             {
                 Soldier playerSoldier = button1.Tag as Soldier;
                 Soldier enemySoldier = button2.Tag as Soldier;
-                if (SelectedOwnPieces(button1, button2) || !Client.IsPlayersTurn)
+
+                //player selected two pieces of himself
+                if (SelectedOwnPieces(button1, button2) /*|| !Client.IsPlayersTurn*/)
                 {
                     //button deselect
                     SelectionControl(button1, null);
                     SelectionControl(button2, null);
                     return;
                 }
-
-                if (playerSoldier.number > enemySoldier.number)
+                //code for bombs
+                //if player selected bomb or flag, don't do stuff
+                if (button1.Tag is Bomb || button1.Tag is Flag)
                 {
-                    Control C;
-                    C = button2.Parent;
-                    C.Controls.Clear();
-                    button1.Parent = C;
+                    Console.WriteLine("Can't hit with bomb");
+                }
+                //if player hits bomb with 'Mineur', bomb is gone
+                else if ((playerSoldier.soldier == SoldierType.Mineur && button2.Tag is Bomb))
+                {
+                    RemoveEnemyPiece(button1, button2);
+                }
+                else if (button2.Tag is Bomb)
+                {
+                    RemovePlayerPiece(button1, button2);
+                }
+
+                //code for soldiers
+                //player soldier is stronger than enemy's, delete enemy's
+                else if (playerSoldier.soldier == SoldierType.Spion && enemySoldier.soldier == SoldierType.Maarschalk)
+                {
+                    RemoveEnemyPiece(button1, button2);
+                }
+                else if (playerSoldier.number > enemySoldier.number)
+                {
+                    RemoveEnemyPiece(button1, button2);
                     
                 }
+                //enemy soldier is stronger than player's, delete player's
                 else if (playerSoldier.number < enemySoldier.number)
                 {
-                    Control C;
-                    C = button1.Parent;
-                    C.Controls.Clear();
-                    //show enemy piece
+                    RemovePlayerPiece(button1, button2);
                 }
+                //soldier strenght is equal, so delete both
                 else
                 {
                     button1.Parent.Controls.Clear();
@@ -523,7 +548,10 @@ namespace Stratego
             }
             else
             {
-                //Nothit
+                //deselect
+                SelectionControl(button1, null);
+                SelectionControl(button2, null);
+                return;
             }
 
             //button deselect
@@ -532,8 +560,26 @@ namespace Stratego
 
             if (StateGame == GameState.Game)
             {
-                Client.IsPlayersTurn = false;
+                //Client.IsPlayersTurn = false;
             }
+        }
+
+        public void RemoveEnemyPiece(Button button1, Button button2)
+        {
+            Control C;
+            C = button2.Parent;
+            C.Controls.Clear();
+            button1.Parent = C;
+        }
+
+        public void RemovePlayerPiece(Button button1, Button button2)
+        {
+            Control C;
+            C = button1.Parent;
+
+            //show enemy piece
+            ShowButtonText(button2);
+            C.Controls.Clear();
         }
 
         public bool EnemyCheck(Button B)
@@ -561,6 +607,47 @@ namespace Stratego
             {
                 return false;
             }
+        }
+
+        public bool PieceInLine(Button button)
+        {
+            Tile T = button.Parent.Tag as Tile;
+            if (T.CellMoveLine)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void ShowButtonText(Button button)
+        {
+            ButtonToHide = button;
+            string s;
+            if (button.Tag is Bomb)
+            {
+                s = "Bomb";
+            }
+            else if (button.Tag is Flag)
+            {
+                s = "Flag";
+            }
+            else
+            {
+                Soldier sol = button.Tag as Soldier;
+                s = sol.soldier.ToString();
+            }
+
+            ButtonToHide.Text = s;
+            HideButtonTextTimer.Start();
+        }
+        public void HideButtonText(object sender, EventArgs e)
+        {
+            HideButtonTextTimer.Stop();
+            ButtonToHide.Text = ButtonToHide.Name;
+            ButtonToHide = null;
         }
 
         private void button1_Click(object sender, EventArgs e)
