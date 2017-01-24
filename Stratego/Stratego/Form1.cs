@@ -414,6 +414,8 @@ namespace Stratego
                     }
                 }
             }
+            Refresh();
+            BoardPanel.Refresh();
             if (!Client.IsPlayersTurn) SendBoardButton.Text = "Not your turn"; else SendBoardButton.Text = "Send gameboard";
         }
         
@@ -685,8 +687,9 @@ namespace Stratego
 
         private void ReadyButton_Click(object sender, EventArgs e)
         {
+            UpdateGameboard();
             StateGame = GameState.Game;
-            Client.WriteToServer("Ready");
+            Client.SendReady();
         }
     }
 }

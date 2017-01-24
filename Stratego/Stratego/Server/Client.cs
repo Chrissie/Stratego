@@ -82,6 +82,7 @@ namespace Stratego.Server
 
         public void ReadFromServer(object obj)
         {
+            int i = 0;
             while (Connected)
             {
                 try
@@ -108,7 +109,9 @@ namespace Stratego.Server
                                 SoapFormatter formatter = new SoapFormatter();
                                 cells = formatter.Deserialize(ms) as Cell[,];
                             }
-                            PlayerBoard.board = cells;
+                            //PlayerBoard.board = cells;
+                            PlayerBoard = new GameBoard($"{GetHashCode()}", cells);
+
                             Debug.WriteLine("Received new gameboard from server! " + PlayerBoard.ToString());
                         }
                         if (returnData.Equals("yourturn"))
@@ -147,6 +150,20 @@ namespace Stratego.Server
                 stream.Close();
                 Connected = false;
             }
+        }
+
+        public void SendReady()
+        {
+            string arraya = "Ready-";
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ms.Seek(0, SeekOrigin.Begin);
+                SoapFormatter formatter = new SoapFormatter();
+                formatter.Serialize(ms, PlayerBoard.board);
+                arraya += Encoding.UTF8.GetString(ms.ToArray());
+            }
+            byte[] tosend = BuildMessage(arraya);
+            stream.Write(tosend, 0, tosend.Length);
         }
 
         public void SendGameBoard()
