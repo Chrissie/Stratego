@@ -37,41 +37,26 @@ namespace Stratego.Server
         public void SetUp()
         {
             TcpListener server = null;
-
             try
             {
-                // Set the TcpListener on port 13000.
                 Int32 port = 13000;
                 IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-
                 // TcpListener server = new TcpListener(port);
-                server = new TcpListener(localAddr, port);
-
+                server = new TcpListener(localAddr, port)
                 // Start listening for client requests.
-                server.Start();
-
+                server.Start()
                 // Enter the listening loop.
                 while (users.Count <= 10)
                 {
                     object[] clientsAsObjArray = new object[2];
-                    Debug.Write("Waiting for a connection... ");
-
                     TcpClient client1 = server.AcceptTcpClient();
                     clientsAsObjArray[0] = client1;
-                   
-                    Debug.WriteLine("Accepted Client1");
-
                     TcpClient client2 = server.AcceptTcpClient();
-                    clientsAsObjArray[1] = client2;
-                    Debug.WriteLine("Accepted Client2");
-
-                    Debug.WriteLine("Connected!");
+                    clientsAsObjArray[1] = client2
                     // Handle 2 clients in their own thread
                     Thread thread = new Thread(HandleTwoClients);
                     thread.Start(clientsAsObjArray);
                 }
-                
-
             }
             catch (SocketException e)
             {
@@ -94,9 +79,6 @@ namespace Stratego.Server
             TcpClient client1 = (TcpClient)clients[0];
             TcpClient client2 = (TcpClient)clients[1];
 
-
-            Debug.WriteLine("Got two clients succesfully in 1 thread!!!");
-
             NetworkStream player1stream = client1.GetStream();
             NetworkStream player2stream = client2.GetStream();
 
@@ -106,7 +88,6 @@ namespace Stratego.Server
                 string login = ReadFirstMessage(player1stream);
                 lastinfo = login;
                 users.Add(login);
-                Debug.WriteLine("Login: " + login);
             }
             if (client2.Connected)
             {
@@ -114,7 +95,6 @@ namespace Stratego.Server
                 string login = ReadFirstMessage(player2stream);
                 lastinfo = login;
                 users.Add(login);
-                Debug.WriteLine("Login: " + login);
             }
 
             while(client1.Connected && client2.Connected)
@@ -142,28 +122,18 @@ namespace Stratego.Server
                     if (setup)
                     {
                         ServerGameBoard.board = player1cells;
+
                         GameBoard g = new GameBoard("player2", player2cells);
                         g.RotateBoard180();
                         player2cells = g.board;
+
                         ServerGameBoard.CreateFullGameBoard(player2cells);
-                        string servergameboardstring = "";
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            ms.Seek(0, SeekOrigin.Begin);
-                            SoapFormatter formatter = new SoapFormatter();
-                            formatter.Serialize(ms, ServerGameBoard.board);
-                            servergameboardstring = Encoding.UTF8.GetString(ms.ToArray());
-                        }
+                        string servergameboardstring = Client.SerializeCells(ServerGameBoard.board);
                         WriteToClient(player1stream, "board-" + servergameboardstring);
+
                         ServerGameBoard.RotateBoard180();
-                        servergameboardstring = "";
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            ms.Seek(0, SeekOrigin.Begin);
-                            SoapFormatter formatter = new SoapFormatter();
-                            formatter.Serialize(ms, ServerGameBoard.board);
-                            servergameboardstring = Encoding.UTF8.GetString(ms.ToArray());
-                        }
+
+                        servergameboardstring = Client.SerializeCells(ServerGameBoard.board);
                         WriteToClient(player2stream, "board-" + servergameboardstring);
                     }
                     try
@@ -178,17 +148,15 @@ namespace Stratego.Server
                         }
                         player1turn = !player1turn;
                     }
-                    catch (IOException e)
+                    catch (IOException)
                     {
-                        Debug.WriteLine("A player disconnected " + e.Message);
+                        player1stream.Close();
+                        player2stream.Close();
                     }
                 }
             }
-           
-            // Shutdown and end connection.
             client1.Close();
             client2.Close();
-            Debug.WriteLine("Connection Closed");
         }
 
         public void HandleReady(object objects)
@@ -206,25 +174,14 @@ namespace Stratego.Server
                     {
                         string boardstring = Json.ToString();
                         boardstring = Regex.Split(boardstring, "Ready-")[1];
-                        using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(boardstring)))
-                        {
-                            ms.Seek(0, SeekOrigin.Begin);
-                            SoapFormatter formatter = new SoapFormatter();
-                            player1cells = formatter.Deserialize(ms) as Cell[,];
-                        }
+                        player1cells = Client.DeserializeCells(boardstring);
                         player1ready = true;
                     }
-
-                    if (playerready ==2)
+                    else if (playerready ==2)
                     {
                         string boardstring = Json.ToString();
                         boardstring = Regex.Split(boardstring, "Ready-")[1];
-                        using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(boardstring)))
-                        {
-                            ms.Seek(0, SeekOrigin.Begin);
-                            SoapFormatter formatter = new SoapFormatter();
-                            player2cells = formatter.Deserialize(ms) as Cell[,];
-                        }
+                        player2cells = Client.DeserializeCells(boardstring);
                         player2ready = true;
                     }
                     break;
@@ -244,34 +201,17 @@ namespace Stratego.Server
                 if (Json.ToString().StartsWith("board"))
                 {
                     receivedBoard = true;
-                    Cell[,] cells;
                     string boardstring = (string)Json;
                     boardstring = Regex.Split(boardstring, "board-")[1];
 
-                    using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(boardstring)))
-                    {
-                        ms.Seek(0, SeekOrigin.Begin);
-                        SoapFormatter formatter = new SoapFormatter();
-                        cells = formatter.Deserialize(ms) as Cell[,];
-                    }
-                    Thread.Sleep(2000);
-                    //ServerGameBoard.board = cells;
-                    ServerGameBoard = new GameBoard("server", cells);
+                    Cell[,] cells = Client.DeserializeCells(boardstring);
+                    ServerGameBoard.board = cells;
                     ServerGameBoard.RotateBoard180();
 
-                    string servergameboardstring = "";
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        ms.Seek(0, SeekOrigin.Begin);
-                        SoapFormatter formatter = new SoapFormatter();
-                        formatter.Serialize(ms, ServerGameBoard.board);
-                        servergameboardstring = Encoding.UTF8.GetString(ms.ToArray());
-                    }
+                    string servergameboardstring = Client.SerializeCells(ServerGameBoard.board);
                     WriteToClient(player2, "board-" + servergameboardstring);
                 }
             }
-            
-
         }
 
         // Read from the Stream.
@@ -283,7 +223,6 @@ namespace Stratego.Server
 
         private void WriteToClient(NetworkStream stream, string message)
         {
-            Debug.WriteLine($"Server: Writing message {message} to a stream");
             byte[] buffer = BuildMessage(message);
             stream.Write(buffer, 0, buffer.Length);
         }
@@ -293,7 +232,6 @@ namespace Stratego.Server
         {
             StringBuilder stringbuilder = new StringBuilder();
             stringbuilder.AppendFormat("{0}", Encoding.ASCII.GetString(array, 0, array.Length));
-            //return JsonConvert.DeserializeObject(stringbuilder.ToString());
             return stringbuilder.ToString();
         }
 

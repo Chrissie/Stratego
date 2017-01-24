@@ -63,15 +63,11 @@ namespace Stratego.Server
             {
                 Int32 port = 13000;
                 tcpClient = new TcpClient(server, port);
-                // Identify to the server as a client
                 stream = tcpClient.GetStream();
                 if (!LoginName.Equals("Client"))
                 {
                     LoginName = "Client-" + LoginName;
                 }
-                byte[] bytes = BuildMessage(LoginName);
-                //stream.Write(bytes, 0, bytes.Length);
-                Debug.WriteLine("Send Client");
                 Connected = true;  
             }
             catch (SocketException e)
@@ -82,7 +78,6 @@ namespace Stratego.Server
 
         public void ReadFromServer(object obj)
         {
-            int i = 0;
             while (Connected)
             {
                 try
@@ -90,9 +85,8 @@ namespace Stratego.Server
                     if (stream.CanRead)
                     {
                         byte[] bytes = Read(stream);
-
                         string returnData = Encoding.ASCII.GetString(bytes);
-                        Debug.WriteLine($"{LoginName}: Server returns: " + returnData);
+
                         if (returnData.StartsWith("chat"))
                         {
                             string chat = returnData.Split('-')[1];
@@ -101,29 +95,17 @@ namespace Stratego.Server
                         if (returnData.StartsWith("board"))
                         {
                             string boardstring = Regex.Split(returnData, "board-")[1];
-
-                            Cell[,] cells;
-                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(boardstring)))
-                            {
-                                ms.Seek(0, SeekOrigin.Begin);
-                                SoapFormatter formatter = new SoapFormatter();
-                                cells = formatter.Deserialize(ms) as Cell[,];
-                            }
-                            //PlayerBoard.board = cells;
-                            PlayerBoard = new GameBoard($"{GetHashCode()}", cells);
-
-                            Debug.WriteLine("Received new gameboard from server! " + PlayerBoard.ToString());
+                            Cell[,] cells = DeserializeCells(boardstring);
+                            PlayerBoard.board = cells;
                         }
                         if (returnData.Equals("yourturn"))
                         {
                             IsPlayersTurn = true;
-                            //SendGameBoard();
                         }
                     }
                 }
                 catch (IOException)
                 {
-                    Debug.WriteLine("Server disconnected");
                     stream.Close();
                     Connected = false;
                 }
@@ -134,6 +116,27 @@ namespace Stratego.Server
         {
             byte[] bytestowrite = BuildMessage(toWrite);
             stream.Write(bytestowrite, 0, bytestowrite.Length);
+        }
+
+        public static string SerializeCells(Cell[,] cells)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ms.Seek(0, SeekOrigin.Begin);
+                SoapFormatter formatter = new SoapFormatter();
+                formatter.Serialize(ms, cells);
+                return Encoding.UTF8.GetString(ms.ToArray());
+            }
+        }
+
+        public static Cell[,] DeserializeCells(string serializedCells)
+        {
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(serializedCells)))
+            {
+                ms.Seek(0, SeekOrigin.Begin);
+                SoapFormatter formatter = new SoapFormatter();
+                return formatter.Deserialize(ms) as Cell[,];
+            }
         }
 
         public void WriteFirstMessageToServer()
@@ -155,13 +158,7 @@ namespace Stratego.Server
         public void SendReady()
         {
             string arraya = "Ready-";
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Seek(0, SeekOrigin.Begin);
-                SoapFormatter formatter = new SoapFormatter();
-                formatter.Serialize(ms, PlayerBoard.board);
-                arraya += Encoding.UTF8.GetString(ms.ToArray());
-            }
+            arraya += SerializeCells(PlayerBoard.board);
             byte[] tosend = BuildMessage(arraya);
             stream.Write(tosend, 0, tosend.Length);
         }
@@ -169,13 +166,7 @@ namespace Stratego.Server
         public void SendGameBoard()
         {
             string arraya = "board-";
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Seek(0, SeekOrigin.Begin);
-                SoapFormatter formatter = new SoapFormatter();
-                formatter.Serialize(ms, PlayerBoard.board);
-                arraya += Encoding.UTF8.GetString(ms.ToArray());
-            }
+            arraya += SerializeCells(PlayerBoard.board);
             byte[] tosend = BuildMessage(arraya);
             stream.Write(tosend, 0, tosend.Length);
             IsPlayersTurn = false;
@@ -198,13 +189,10 @@ namespace Stratego.Server
         public byte[] BuildMessage(string s)
         {
             byte[] jsonByte = Encoding.Default.GetBytes(s);
-            //Debug.WriteLine("Json length:" + jsonByte.Length);
             byte[] buffer = BitConverter.GetBytes(jsonByte.Length);
-
             byte[] messageToSend = new byte[buffer.Length + jsonByte.Length];
             Array.Copy(jsonByte, 0, messageToSend, buffer.Length, jsonByte.Length);
             Array.Copy(buffer, 0, messageToSend, 0, buffer.Length);
-            Debug.WriteLine($"MessagetoSend: {messageToSend}");
             return messageToSend;
         }
 
@@ -226,7 +214,5 @@ namespace Stratego.Server
             } while (totalBytes < sizeSecond);
             return completeBuffer;
         }
-
     }
 }
-        
