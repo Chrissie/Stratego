@@ -39,7 +39,7 @@ namespace Stratego
             ButtonPanel.Tag = new Tile(101, 101);
             createBoard();
             //testcode
-            Client.PlayerBoard.Test();
+            //Client.PlayerBoard.Test();
         }
         
         
@@ -409,6 +409,8 @@ namespace Stratego
                     }
                 }
             }
+            Refresh();
+            BoardPanel.Refresh();
             if (!Client.IsPlayersTurn) SendBoardButton.Text = "Not your turn"; else SendBoardButton.Text = "Send gameboard";
         }
         
@@ -532,7 +534,7 @@ namespace Stratego
 
             if (StateGame == GameState.Game)
             {
-                Client.IsPlayersTurn = false;
+                //Client.IsPlayersTurn = false;
             }
         }
 
@@ -600,7 +602,7 @@ namespace Stratego
         {
             UpdateGameboard();
             StateGame = GameState.Game;
-            Client.WriteToServer("Ready");
+            Client.SendReady();
         }
     }
 }

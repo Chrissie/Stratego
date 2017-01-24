@@ -25,6 +25,9 @@ namespace Stratego.Server
         private Thread readythread;
         private Thread readythread2;
 
+        private Cell[,] player1cells;
+        private Cell[,] player2cells;
+
         public Server()
         {
             Thread setupthread = new Thread(SetUp);
@@ -132,9 +135,37 @@ namespace Stratego.Server
                 }
                 else if (player2ready) readythread2.Abort();
 
+                bool setup = true;
                 bool player1turn = true;
                 while (player1ready && player2ready)
                 {
+                    if (setup)
+                    {
+                        ServerGameBoard.board = player1cells;
+                        GameBoard g = new GameBoard("player2", player2cells);
+                        g.RotateBoard180();
+                        player2cells = g.board;
+                        ServerGameBoard.CreateFullGameBoard(player2cells);
+                        string servergameboardstring = "";
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            ms.Seek(0, SeekOrigin.Begin);
+                            SoapFormatter formatter = new SoapFormatter();
+                            formatter.Serialize(ms, ServerGameBoard.board);
+                            servergameboardstring = Encoding.UTF8.GetString(ms.ToArray());
+                        }
+                        WriteToClient(player1stream, "board-" + servergameboardstring);
+                        ServerGameBoard.RotateBoard180();
+                        servergameboardstring = "";
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            ms.Seek(0, SeekOrigin.Begin);
+                            SoapFormatter formatter = new SoapFormatter();
+                            formatter.Serialize(ms, ServerGameBoard.board);
+                            servergameboardstring = Encoding.UTF8.GetString(ms.ToArray());
+                        }
+                        WriteToClient(player2stream, "board-" + servergameboardstring);
+                    }
                     try
                     {
                         if (player1turn)
@@ -169,20 +200,36 @@ namespace Stratego.Server
             {
                 dynamic Json = null;
                 Json = ReadFromClient(playerstream);
-                if (Json.ToString().Equals("Ready"))
+                if (Json.ToString().StartsWith("Ready"))
                 {
                     if (playerready == 1)
                     {
+                        string boardstring = Json.ToString();
+                        boardstring = Regex.Split(boardstring, "Ready-")[1];
+                        using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(boardstring)))
+                        {
+                            ms.Seek(0, SeekOrigin.Begin);
+                            SoapFormatter formatter = new SoapFormatter();
+                            player1cells = formatter.Deserialize(ms) as Cell[,];
+                        }
                         player1ready = true;
                     }
+
                     if (playerready ==2)
                     {
+                        string boardstring = Json.ToString();
+                        boardstring = Regex.Split(boardstring, "Ready-")[1];
+                        using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(boardstring)))
+                        {
+                            ms.Seek(0, SeekOrigin.Begin);
+                            SoapFormatter formatter = new SoapFormatter();
+                            player2cells = formatter.Deserialize(ms) as Cell[,];
+                        }
                         player2ready = true;
                     }
                     break;
                 }
-            }
-           
+            }  
         }
 
         public void HandleTurn(NetworkStream player1, NetworkStream player2)
@@ -208,7 +255,8 @@ namespace Stratego.Server
                         cells = formatter.Deserialize(ms) as Cell[,];
                     }
                     Thread.Sleep(2000);
-                    ServerGameBoard.board = cells;
+                    //ServerGameBoard.board = cells;
+                    ServerGameBoard = new GameBoard("server", cells);
                     ServerGameBoard.RotateBoard180();
 
                     string servergameboardstring = "";
@@ -219,8 +267,6 @@ namespace Stratego.Server
                         formatter.Serialize(ms, ServerGameBoard.board);
                         servergameboardstring = Encoding.UTF8.GetString(ms.ToArray());
                     }
-                    //Niet echt nodig om naar zelfde speler te schrijven
-                    //WriteToClient(player1, "board-" + servergameboardstring);
                     WriteToClient(player2, "board-" + servergameboardstring);
                 }
             }
