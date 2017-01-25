@@ -42,9 +42,9 @@ namespace Stratego.Server
                 Int32 port = 13000;
                 IPAddress localAddr = IPAddress.Parse("127.0.0.1");
                 // TcpListener server = new TcpListener(port);
-                server = new TcpListener(localAddr, port)
+                server = new TcpListener(localAddr, port);
                 // Start listening for client requests.
-                server.Start()
+                server.Start();
                 // Enter the listening loop.
                 while (users.Count <= 10)
                 {
@@ -52,7 +52,7 @@ namespace Stratego.Server
                     TcpClient client1 = server.AcceptTcpClient();
                     clientsAsObjArray[0] = client1;
                     TcpClient client2 = server.AcceptTcpClient();
-                    clientsAsObjArray[1] = client2
+                    clientsAsObjArray[1] = client2;
                     // Handle 2 clients in their own thread
                     Thread thread = new Thread(HandleTwoClients);
                     thread.Start(clientsAsObjArray);
@@ -135,6 +135,7 @@ namespace Stratego.Server
 
                         servergameboardstring = Client.SerializeCells(ServerGameBoard.board);
                         WriteToClient(player2stream, "board-" + servergameboardstring);
+                        setup = false;
                     }
                     try
                     {
