@@ -538,7 +538,14 @@ namespace Stratego
             bool youLost = true;
             foreach (var item in Client.PlayerBoard.board)
             {
-                if (item is Flag) youLost = false;
+                if (item is Flag)
+                {
+                    var flag = item as Flag;
+                    if (flag.username.Equals(Client.LoginName))
+                    {
+                        youLost = false;
+                    }
+                }
             }
             if (youLost)
             {
