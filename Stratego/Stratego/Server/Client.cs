@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using Stratego.Game;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 
 namespace Stratego.Server
 {
@@ -23,13 +24,16 @@ namespace Stratego.Server
         NetworkStream stream;
         public string LoginName;
 
-        public Game.GameBoard PlayerBoard;
+        public ObservableCollection<Cell[,]> collection = new ObservableCollection<Cell[,]>();
+        public GameBoard PlayerBoard;
         public bool IsPlayersTurn = false;
 
         public Client(string ip = "localhost" , string loginName = "Client")
-        {
+        { 
             LoginName= loginName;
             PlayerBoard = new GameBoard(LoginName);
+            collection.Add(PlayerBoard.board);
+
             try
             {
                 int tries = 0;
@@ -97,10 +101,13 @@ namespace Stratego.Server
                             string boardstring = Regex.Split(returnData, "board-")[1];
                             Cell[,] cells = DeserializeCells(boardstring);
                             PlayerBoard.board = cells;
+                            //collection.Clear();
+                            //collection.Add(PlayerBoard.board);
                         }
                         if (returnData.Equals("yourturn"))
                         {
                             IsPlayersTurn = true;
+                            collection[0] = PlayerBoard.board;
                         }
                     }
                 }
