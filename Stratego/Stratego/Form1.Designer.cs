@@ -28,72 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.BoardPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.ButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.saveButton = new System.Windows.Forms.Button();
-            this.UpdateGUIButton = new System.Windows.Forms.Button();
-            this.SendBoardButton = new System.Windows.Forms.Button();
-            this.ChangeStateButton = new System.Windows.Forms.Button();
             this.ReadyButton = new System.Windows.Forms.Button();
+            this.IsTurnLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // BoardPanel
             // 
+            this.BoardPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.BoardPanel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("BoardPanel.BackgroundImage")));
+            this.BoardPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.BoardPanel.Location = new System.Drawing.Point(12, 15);
             this.BoardPanel.Name = "BoardPanel";
-            this.BoardPanel.Size = new System.Drawing.Size(903, 963);
+            this.BoardPanel.Size = new System.Drawing.Size(850, 922);
             this.BoardPanel.TabIndex = 4;
             // 
             // ButtonPanel
             // 
-            this.ButtonPanel.Location = new System.Drawing.Point(935, 15);
+            this.ButtonPanel.BackColor = System.Drawing.Color.DarkGray;
+            this.ButtonPanel.Location = new System.Drawing.Point(868, 15);
             this.ButtonPanel.Name = "ButtonPanel";
-            this.ButtonPanel.Size = new System.Drawing.Size(393, 963);
+            this.ButtonPanel.Size = new System.Drawing.Size(393, 881);
             this.ButtonPanel.TabIndex = 5;
-            // 
-            // saveButton
-            // 
-            this.saveButton.Location = new System.Drawing.Point(1334, 15);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(86, 37);
-            this.saveButton.TabIndex = 6;
-            this.saveButton.Text = "Save gameboard";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // UpdateGUIButton
-            // 
-            this.UpdateGUIButton.Location = new System.Drawing.Point(1334, 58);
-            this.UpdateGUIButton.Name = "UpdateGUIButton";
-            this.UpdateGUIButton.Size = new System.Drawing.Size(86, 40);
-            this.UpdateGUIButton.TabIndex = 7;
-            this.UpdateGUIButton.Text = "Update GUI";
-            this.UpdateGUIButton.UseVisualStyleBackColor = true;
-            this.UpdateGUIButton.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // SendBoardButton
-            // 
-            this.SendBoardButton.Location = new System.Drawing.Point(1334, 104);
-            this.SendBoardButton.Name = "SendBoardButton";
-            this.SendBoardButton.Size = new System.Drawing.Size(86, 44);
-            this.SendBoardButton.TabIndex = 8;
-            this.SendBoardButton.Text = "Send Gameboard";
-            this.SendBoardButton.UseVisualStyleBackColor = true;
-            this.SendBoardButton.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // ChangeStateButton
-            // 
-            this.ChangeStateButton.Location = new System.Drawing.Point(1334, 154);
-            this.ChangeStateButton.Name = "ChangeStateButton";
-            this.ChangeStateButton.Size = new System.Drawing.Size(86, 23);
-            this.ChangeStateButton.TabIndex = 9;
-            this.ChangeStateButton.Text = "Change State";
-            this.ChangeStateButton.UseVisualStyleBackColor = true;
-            this.ChangeStateButton.Click += new System.EventHandler(this.button5_Click);
             // 
             // ReadyButton
             // 
-            this.ReadyButton.Location = new System.Drawing.Point(1334, 184);
+            this.ReadyButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.ReadyButton.Location = new System.Drawing.Point(1175, 899);
             this.ReadyButton.Name = "ReadyButton";
             this.ReadyButton.Size = new System.Drawing.Size(86, 38);
             this.ReadyButton.TabIndex = 10;
@@ -101,35 +64,43 @@
             this.ReadyButton.UseVisualStyleBackColor = true;
             this.ReadyButton.Click += new System.EventHandler(this.ReadyButton_Click);
             // 
+            // IsTurnLabel
+            // 
+            this.IsTurnLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.IsTurnLabel.AutoSize = true;
+            this.IsTurnLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.IsTurnLabel.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.IsTurnLabel.Location = new System.Drawing.Point(868, 899);
+            this.IsTurnLabel.Name = "IsTurnLabel";
+            this.IsTurnLabel.Size = new System.Drawing.Size(54, 16);
+            this.IsTurnLabel.TabIndex = 11;
+            this.IsTurnLabel.Text = "Ready";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1441, 598);
+            this.BackColor = System.Drawing.Color.DarkSeaGreen;
+            this.ClientSize = new System.Drawing.Size(1270, 1053);
+            this.Controls.Add(this.IsTurnLabel);
             this.Controls.Add(this.ReadyButton);
-            this.Controls.Add(this.ChangeStateButton);
-            this.Controls.Add(this.SendBoardButton);
-            this.Controls.Add(this.UpdateGUIButton);
-            this.Controls.Add(this.saveButton);
             this.Controls.Add(this.ButtonPanel);
             this.Controls.Add(this.BoardPanel);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
         private System.Windows.Forms.FlowLayoutPanel BoardPanel;
         private System.Windows.Forms.FlowLayoutPanel ButtonPanel;
-        private System.Windows.Forms.Button saveButton;
-        private System.Windows.Forms.Button UpdateGUIButton;
-        private System.Windows.Forms.Button SendBoardButton;
-        private System.Windows.Forms.Button ChangeStateButton;
         private System.Windows.Forms.Button ReadyButton;
+        private System.Windows.Forms.Label IsTurnLabel;
     }
 }
 

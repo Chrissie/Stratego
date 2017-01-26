@@ -425,7 +425,7 @@ namespace Stratego
                 button.Parent = panel;
                 if (StateGame == GameState.Game)
                 {
-                    //Client.SendGameBoard();
+                    EndTurn();
                 }
             }
 
@@ -501,8 +501,8 @@ namespace Stratego
                         {
                             if (!ShowEnemy)
                             {
-                                Button.Text = "EnemyPiece";
-                                Button.Name = "EnemyPiece";
+                                Button.Text = "Enemy";
+                                Button.Name = "Enemy";
                             }
                             
                         }
@@ -514,7 +514,7 @@ namespace Stratego
             }
             Refresh();
             BoardPanel.Refresh();
-            if (!Client.IsPlayersTurn) SendBoardButton.Text = "Not your turn"; else SendBoardButton.Text = "Send gameboard";
+            if (!Client.IsPlayersTurn) IsTurnLabel.Text = "Not your turn"; else IsTurnLabel.Text = "Your turn!";
         }
         
         public void createBoard()
@@ -585,6 +585,7 @@ namespace Stratego
                     Panel.Size = new System.Drawing.Size(79, 87);
                     Panel.Tag = Tile;
                     Panel.Name = "Tile_" + i + "," + j;
+                    Panel.BackColor = Color.Transparent;
                     Panel.Parent = BoardPanel;
                 }
             }
@@ -599,7 +600,7 @@ namespace Stratego
                 Soldier enemySoldier = button2.Tag as Soldier;
 
                 //player selected two pieces of himself
-                if (SelectedOwnPieces(button1, button2) /*|| !Client.IsPlayersTurn*/)
+                if (SelectedOwnPieces(button1, button2) || !Client.IsPlayersTurn)
                 {
                     //button deselect
                     SelectionControl(button1, null);
@@ -663,7 +664,7 @@ namespace Stratego
 
             if (StateGame == GameState.Game)
             {
-                //Client.SendGameBoard();
+                EndTurn();
             }
         }
 
@@ -753,44 +754,39 @@ namespace Stratego
             ButtonToHide = null;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        public void EndTurn()
         {
             UpdateGameboard();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
+            Client.SendGameBoard();
             UpdateGUI();
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (StateGame == GameState.PiecePlacement)
-            {
-                StateGame = GameState.Game;
-                return;
-            }
-            if (StateGame == GameState.Game)
-            {
-                StateGame = GameState.PiecePlacement;
-                return;
-            }
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            UpdateGameboard();
-            if (Client.IsPlayersTurn)
-            {
-                Client.SendGameBoard();
-            }
         }
 
         private void ReadyButton_Click(object sender, EventArgs e)
         {
-            UpdateGameboard();
-            StateGame = GameState.Game;
-            Client.SendReady();
+            if (ButtonPanel.Controls.Count <= 0)
+            {
+                UpdateGameboard();
+                StateGame = GameState.Game;
+                Client.SendReady();
+                IsTurnLabel.Text = "Waiting for opponent";
+                ReadyButton.Enabled = false;
+                return;
+            }
+            else
+            {
+                IsTurnLabel.Text = "Need all pieces";
+            }
+        }
+
+        public void MakeDialog(string msg)
+        {
+            Form dlg1 = new Form();
+            Label label = new Label();
+            label.Text = msg;
+
+            dlg1.Location = this.Location;
+            dlg1.Controls.Add(label);
+            dlg1.ShowDialog();
         }
     }
 }
