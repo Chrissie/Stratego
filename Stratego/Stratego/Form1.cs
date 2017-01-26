@@ -5,10 +5,10 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Stratego.Game;
 using System.Runtime.InteropServices;
+using System.Collections.ObjectModel;
 
 namespace Stratego
 {
@@ -33,6 +33,15 @@ namespace Stratego
         {
             InitializeComponent();
             Client = client;
+            client.collection.CollectionChanged += Collection_CollectionChanged;
+        }
+
+        private void Collection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            BeginInvoke((MethodInvoker)delegate
+            {
+                UpdateGUI();
+            });
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -359,6 +368,7 @@ namespace Stratego
         //updates the gui according to the gameboard
         public void UpdateGUI()
         {
+           
             foreach (FlowLayoutPanel f in BoardPanel.Controls)
             {
                 f.Controls.Clear();
