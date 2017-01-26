@@ -61,15 +61,30 @@ namespace Stratego
             //check if button is already selected
             Control C = sender as Control;
             
+
             if (C.Equals(SelectedControls[0]))
             {
                 SelectedControls[0].BackColor = DESELECTCOLOR;
+                if (C is Button)
+                {
+                    if (EnemyCheck(C as Button))
+                    {
+                        C.BackColor = Color.Red;
+                    }
+                }
                 SelectedControls[0] = null;
             }
             else if (C.Equals(SelectedControls[1]))
             {
 
                 SelectedControls[1].BackColor = DESELECTCOLOR;
+                if (C is Button)
+                {
+                    if (EnemyCheck(C as Button))
+                    {
+                        C.BackColor = Color.Red;
+                    }
+                }
                 SelectedControls[1] = null;
             }
 
@@ -478,39 +493,63 @@ namespace Stratego
                         Button.MouseClick += SelectionControl;
                         Button.FlatStyle = FlatStyle.Flat;
 
+                        Image[] image = new Image[2];
+
                         //check username
                         if (cell is Soldier)
                         {
                             Soldier c = cell as Soldier;
                             username = c.username;
-                            Button.Text = c.soldier.ToString();
+                            //Button.Text = c.soldier.ToString();
+                            Pictures.Images.TryGetValue(c.soldier.ToString(), out image);
                         }
                         else if (cell is Bomb)
                         {
                             Bomb c = cell as Bomb;
                             username = c.username;
-                            Button.Text = "Bom";
+                            //Button.Text = "Bom";
+                            Pictures.Images.TryGetValue("Bom", out image);
                         }
                         else if (cell is Flag)
                         {
                             Flag c = cell as Flag;
                             username = c.username;
-                            Button.Text = "Vlag";
+                            //Button.Text = "Vlag";
+                            Pictures.Images.TryGetValue("Vlag", out image);
                         }
                         if (!username.Equals(Client.LoginName))
                         {
-                            if (!ShowEnemy)
-                            {
-                                Button.Text = "Enemy";
-                                Button.Name = "Enemy";
-                            }
-                            
+                            //Button.Text = "EnemyPiece";
+                            //Button.Name = "EnemyPiece";
+                            Button.BackColor = Color.Red;
+                        }
+
+                        if (username.Equals(Client.LoginName))
+                        {
+                            Button.BackgroundImage = image[0];
+                            Button.BackgroundImageLayout = ImageLayout.Zoom;
                         }
 
                         Button.Tag = cell;
                         Button.Parent = BoardPanel.Controls[q];
                     }
                 }
+            }
+            bool youLost = true;
+            foreach (var item in Client.PlayerBoard.board)
+            {
+                if (item is Flag)
+                {
+                    var flag = item as Flag;
+                    if (flag.username.Equals(Client.LoginName))
+                    {
+                        youLost = false;
+                    }
+                }
+            }
+            if (youLost)
+            {
+                //NOTIFY
             }
             Refresh();
             BoardPanel.Refresh();
@@ -542,21 +581,28 @@ namespace Stratego
                 Button.FlatStyle = FlatStyle.Flat;
                 Button.Tag = C;
 
+                Image[] i = new Image[2];
+
                 if (C is Soldier)
                 {
                     Soldier c = C as Soldier;
-                    Button.Text = c.soldier.ToString();
+                    //Button.Text = c.soldier.ToString();
+                    Pictures.Images.TryGetValue(c.soldier.ToString(), out i);
                 }
                 else if (C is Bomb)
                 {
                     Bomb c = C as Bomb;
-                    Button.Text = "Bom";
+                    //Button.Text = "Bom";
+                    Pictures.Images.TryGetValue("Bom", out i);
                 }
                 else if (C is Flag)
                 {
                     Flag c = C as Flag;
-                    Button.Text = "Vlag";
+                    //Button.Text = "Vlag";
+                    Pictures.Images.TryGetValue("Vlag", out i);
                 }
+                Button.BackgroundImage = i[0];
+                Button.BackgroundImageLayout = ImageLayout.Zoom;
                 Button.Parent = ButtonPanel;
                 k++;
             }
@@ -729,28 +775,30 @@ namespace Stratego
         public void ShowButtonText(Button button)
         {
             ButtonToHide = button;
-            string s;
+            Image[] i = new Image[2];
             if (button.Tag is Bomb)
             {
-                s = "Bomb";
+                Pictures.Images.TryGetValue("Bomb", out i);
             }
             else if (button.Tag is Flag)
             {
-                s = "Flag";
+                Pictures.Images.TryGetValue("Vlag", out i);
             }
             else
             {
                 Soldier sol = button.Tag as Soldier;
-                s = sol.soldier.ToString();
+                Pictures.Images.TryGetValue(sol.soldier.ToString(), out i);
             }
 
-            ButtonToHide.Text = s;
+            ButtonToHide.BackgroundImage = i[1];
+            ButtonToHide.BackgroundImageLayout = ImageLayout.Zoom; 
             HideButtonTextTimer.Start();
         }
         public void HideButtonText(object sender, EventArgs e)
         {
             HideButtonTextTimer.Stop();
-            ButtonToHide.Text = ButtonToHide.Name;
+            ButtonToHide.BackgroundImage = null;
+            ButtonToHide.BackColor = Color.Red;
             ButtonToHide = null;
         }
 
