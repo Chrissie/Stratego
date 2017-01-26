@@ -535,6 +535,15 @@ namespace Stratego
                     }
                 }
             }
+            bool youLost = true;
+            foreach (var item in Client.PlayerBoard.board)
+            {
+                if (item is Flag) youLost = false;
+            }
+            if (youLost)
+            {
+                //NOTIFY
+            }
             Refresh();
             BoardPanel.Refresh();
             if (!Client.IsPlayersTurn) SendBoardButton.Text = "Not your turn"; else SendBoardButton.Text = "Send gameboard";
