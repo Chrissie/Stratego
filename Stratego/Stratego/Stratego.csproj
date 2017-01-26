@@ -81,6 +81,7 @@
     <Compile Include="Game\Bomb.cs" />
     <Compile Include="Game\Cell.cs" />
     <Compile Include="Game\Character.cs" />
+    <Compile Include="Pictures.cs" />
     <Compile Include="ServerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -151,6 +152,14 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\alles blauw.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\alles rood.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
