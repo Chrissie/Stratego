@@ -549,7 +549,8 @@ namespace Stratego
             }
             if (youLost)
             {
-                //NOTIFY
+                MakeDialog("You Lost");
+
             }
             Refresh();
             BoardPanel.Refresh();
@@ -660,7 +661,7 @@ namespace Stratego
                     Console.WriteLine("Can't hit with bomb");
                 }
                 else if(button2.Tag is Flag){
-                    Console.WriteLine("won");
+                    MakeDialog("You win");
                 }
                 //if player hits bomb with 'Mineur', bomb is gone
                 else if ((playerSoldier.soldier == SoldierType.Mineur && button2.Tag is Bomb))
