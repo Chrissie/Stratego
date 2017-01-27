@@ -22,6 +22,7 @@ namespace Stratego
         private Control[] SelectedControls = new Control[2];
         private Button ButtonToHide;
         private bool ShowEnemy = false;
+        private bool ShowingPiece = false;
 
         private readonly Color SELECTIONCOLOR = Color.FromArgb(255, 192, 128);
         private readonly Color DESELECTCOLOR = Color.Transparent;
@@ -550,10 +551,9 @@ namespace Stratego
             if (youLost)
             {
                 MakeDialog("You Lost");
-
             }
-            Refresh();
-            BoardPanel.Refresh();
+            //Refresh();
+            //BoardPanel.Refresh();
             if (!Client.IsPlayersTurn) IsTurnLabel.Text = "Not your turn"; else IsTurnLabel.Text = "Your turn!";
         }
         
@@ -775,6 +775,7 @@ namespace Stratego
 
         public void ShowButtonText(Button button)
         {
+            ShowingPiece = true;
             ButtonToHide = button;
             Image[] i = new Image[2];
             if (button.Tag is Bomb)
@@ -797,17 +798,22 @@ namespace Stratego
         }
         public void HideButtonText(object sender, EventArgs e)
         {
+            ShowingPiece = false;
             HideButtonTextTimer.Stop();
             ButtonToHide.BackgroundImage = null;
             ButtonToHide.BackColor = Color.Red;
             ButtonToHide = null;
+            EndTurn();
         }
 
         public void EndTurn()
         {
-            UpdateGameboard();
-            Client.SendGameBoard();
-            UpdateGUI();
+            if (!ShowingPiece)
+            {
+                UpdateGameboard();
+                Client.SendGameBoard();
+                UpdateGUI();
+            }
         }
 
         private void ReadyButton_Click(object sender, EventArgs e)
@@ -825,7 +831,7 @@ namespace Stratego
             {
                 IsTurnLabel.Text = "Need all pieces";
             }
-        }
+}
 
         public void MakeDialog(string msg)
         {
