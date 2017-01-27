@@ -780,7 +780,7 @@ namespace Stratego
             Image[] i = new Image[2];
             if (button.Tag is Bomb)
             {
-                Pictures.Images.TryGetValue("Bomb", out i);
+                Pictures.Images.TryGetValue("Bom", out i);
             }
             else if (button.Tag is Flag)
             {
